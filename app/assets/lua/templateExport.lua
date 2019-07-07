@@ -61,7 +61,9 @@ do
 					for i=1,#coaTable.country do
 						local country = coaTable.country[i]
 						for uType,uTable in pairs(country) do
-							if uType == 'helicopter' then
+							if uType == 'helicopter' or uType == 'vehicle' then
+								env.info('TYPE: ' .. uType)
+							--if true then
 								if type(uTable)=='table' and uTable.group then
 									for j=1,#uTable.group do
 										local group = uTable.group[j]
@@ -123,6 +125,36 @@ do
 												polyArray[nArry[4]].layer2Poly[nArry[5]][pIndex] = {
 													[1] = lon,
 													[2] = lat
+												}
+											end
+										end
+										if gName and group.route.points and string.find(gName, '|CONVOY|', 1, true) then
+											env.info("groupName: "..gName)
+											local nArry = gName:split("|")
+											local sourceName = nArry[3]
+											local destName = nArry[4]
+											if polyArray[sourceName] == nil then
+												polyArray[sourceName] = {["convoyTemplate"] = {}}
+											end
+											if polyArray[sourceName].convoyTemplate == nil then
+												polyArray[sourceName].convoyTemplate = {}
+											end
+											if polyArray[sourceName].convoyTemplate[destName] == nil then
+												polyArray[sourceName].convoyTemplate[destName] = {
+													["sourceBase"] = sourceName,
+													["destBase"] = destName,
+													["route"] = {}
+												}
+											end
+											-- env.info('poly3: '..polyArray[convoyBaseName])
+											for pIndex = 1, #group.route.points do
+												local lat, lon, alt = coord.LOtoLL({x = group.route.points[pIndex].x, y = 0, z = group.route.points[pIndex].y})
+												polyArray[sourceName].convoyTemplate[destName].route[pIndex] = {
+													["lonLat"] = {
+														[1] = lon,
+														[2] = lat
+													},
+													["action"] = group.route.points[pIndex].action
 												}
 											end
 										end
