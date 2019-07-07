@@ -31,6 +31,9 @@ const AirfieldSchema = new mongoose.Schema({
 	polygonLoc: {
 		type: Object
 	},
+	convoyTemplate: {
+		type: Object
+	},
 	alt: {
 		type: Number,
 		required: true
