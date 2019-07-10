@@ -1144,14 +1144,17 @@ _.assign(exports, {
 						SrvPlayer.find({ _id: obj._id }, function (err, serverObj) {
 							if (err) {reject(err)}
 							if (serverObj.length !== 0) {
-								SrvPlayer.update(
-									{ _id: obj._id },
-									{ $set: { [sessionHoursVar]: _.get(_.first(serverObj), [sessionHoursVar], 0) + _.get(obj, 'minutesPlayed', 0) } },
-									function (err) {
-										if (err) {reject(err)}
-										resolve();
-									}
-								);
+								let curPlayer = _.first(serverObj);
+								if (new Date(_.get(curPlayer, 'updatedAt', 0)).getTime() + _.get(constants, ['time', 'fiveMins'], 0) > new Date().getTime()) {
+									SrvPlayer.update(
+										{ _id: obj._id },
+										{ $set: { [sessionHoursVar]: _.get(curPlayer, [sessionHoursVar], 0) + _.get(obj, 'minutesPlayed', 0) } },
+										function (err) {
+											if (err) {reject(err)}
+											resolve();
+										}
+									);
+								}
 							}
 						});
 					}
