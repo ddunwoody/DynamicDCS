@@ -13,7 +13,7 @@ const airbaseSyncController = require('../../controllers/serverToDbSync/airbaseS
 const sychrontronController = require('../../controllers/sychronize/Sychrontron');
 const recoveryController = require('../../controllers/sychronize/recovery');
 const jtacController = require('../../controllers/action/jtac');
-const hoursPlayedController = require('../../controllers/action/hoursPlayed');
+const minutesPlayedController = require('../../controllers/action/minutesPlayed');
 const serverTimerController = require('../../controllers/action/serverTimer');
 const processEventHit = require('../../controllers/events/frontend/S_EVENT_HIT');
 const processEventTakeoff = require('../../controllers/events/frontend/S_EVENT_TAKEOFF');
@@ -79,7 +79,7 @@ masterDBController.initDB(serverName, masterServer)
 							_.set(exports, ['sessionName'], sessionName);
 							_.set(exports, ['curAbsTime'], curAbs);
 							console.log('set new session');
-							hoursPlayedController.resetMinutesPlayed(serverName);
+							minutesPlayedController.resetMinutesPlayed(serverName);
 							masterDBController.statSessionActions('save', serverName, newSession)
 								.catch(function (err) {
 									console.log('line49', err);

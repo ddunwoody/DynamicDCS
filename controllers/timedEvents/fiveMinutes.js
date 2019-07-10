@@ -4,7 +4,7 @@
 
 const _ = require('lodash');
 const radioTowerController = require('../action/radioTower');
-const hoursPlayedController = require('../action/hoursPlayed');
+const minutesPlayedController = require('../action/minutesPlayed');
 
 _.set(exports, 'processFiveMinuteActions', function (serverName, fullySynced) {
 	if (fullySynced) {

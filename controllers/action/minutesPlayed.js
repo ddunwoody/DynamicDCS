@@ -69,7 +69,7 @@ _.assign(exports, {
 			})
 		;
 	},
-	resetHoursPlayed: (serverName) => {
+	resetMinutesPlayed: (serverName) => {
 		masterDBController.statSessionActions('readLatest', serverName, {})
 			.then(function (latestSession) {
 				masterDBController.srvPlayerActions('read', serverName, {sessionName: latestSession.name})
