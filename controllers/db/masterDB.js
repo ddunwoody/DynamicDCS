@@ -1140,7 +1140,7 @@ _.assign(exports, {
 			if (action === 'addMinutesPlayed') {
 				return new Promise(function (resolve, reject) {
 					if (obj._id) {
-						let sessionHoursVar = 'currentSessionHoursPlayed_' + _.get(constants, ['side', _.get(obj, 'side')]);
+						let sessionMinutesVar = 'currentSessionMinutesPlayed_' + _.get(constants, ['side', _.get(obj, 'side')]);
 						SrvPlayer.find({ _id: obj._id }, function (err, serverObj) {
 							if (err) {reject(err)}
 							if (serverObj.length !== 0) {
@@ -1148,7 +1148,7 @@ _.assign(exports, {
 								if (new Date(_.get(curPlayer, 'updatedAt', 0)).getTime() + _.get(constants, ['time', 'fiveMins'], 0) > new Date().getTime()) {
 									SrvPlayer.update(
 										{ _id: obj._id },
-										{ $set: { [sessionHoursVar]: _.get(curPlayer, [sessionHoursVar], 0) + _.get(obj, 'minutesPlayed', 0) } },
+										{ $set: { [sessionMinutesVar]: _.get(curPlayer, [sessionMinutesVar], 0) + _.get(obj, 'minutesPlayed', 0) } },
 										function (err) {
 											if (err) {reject(err)}
 											resolve();
@@ -1163,10 +1163,10 @@ _.assign(exports, {
 			if (action === 'resetMinutesPlayed') {
 				return new Promise(function(resolve, reject) {
 					if (obj._id) {
-						let sessionHoursVar = 'currentSessionHoursPlayed_' + _.get(constants, ['side', _.get(obj, 'side')]);
+						let sessionMinutesVar = 'currentSessionMinutesPlayed_' + _.get(constants, ['side', _.get(obj, 'side')]);
 						SrvPlayer.update(
 							{_id: obj._id},
-							{$set: {[sessionHoursVar]: 0}},
+							{$set: {[sessionMinutesVar]: 0}},
 							function(err) {
 								if (err) { reject(err) }
 								resolve();

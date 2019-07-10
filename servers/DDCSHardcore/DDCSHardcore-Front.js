@@ -79,7 +79,7 @@ masterDBController.initDB(serverName, masterServer)
 							_.set(exports, ['sessionName'], sessionName);
 							_.set(exports, ['curAbsTime'], curAbs);
 							console.log('set new session');
-							hoursPlayedController.resetHoursPlayed(serverName);
+							hoursPlayedController.resetMinutesPlayed(serverName);
 							masterDBController.statSessionActions('save', serverName, newSession)
 								.catch(function (err) {
 									console.log('line49', err);
