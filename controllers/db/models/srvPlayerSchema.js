@@ -94,6 +94,14 @@ const srvPlayerSchema = new Schema({
 		cachedRemovedLPPoints: {
 			type: Number,
 			default: 0
+		},
+		currentSessionHoursPlayed_blue: {
+			type: Number,
+			default: 0
+		},
+		currentSessionHoursPlayed_red: {
+			type: Number,
+			default: 0
 		}
 	},
 	{

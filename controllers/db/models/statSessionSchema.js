@@ -20,6 +20,14 @@ const StatSessionSchema = new Schema({
 		},
 		curAbsTime: {
 			type: Number
+		},
+		totalHoursPlayed_blue: {
+			type: Number,
+			default: 0
+		},
+		totalHoursPlayed_red: {
+			type: Number,
+			default: 0
 		}
 	},
 	{

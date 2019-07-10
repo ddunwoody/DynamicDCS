@@ -1137,6 +1137,41 @@ _.assign(exports, {
 					}
 				})
 			}
+			if (action === 'addMinutesPlayed') {
+				return new Promise(function (resolve, reject) {
+					if (obj._id) {
+						let sessionHoursVar = 'currentSessionHoursPlayed_' + _.get(constants, ['side', _.get(obj, 'side')]);
+						SrvPlayer.find({ _id: obj._id }, function (err, serverObj) {
+							if (err) {reject(err)}
+							if (serverObj.length !== 0) {
+								SrvPlayer.update(
+									{ _id: obj._id },
+									{ $set: { [sessionHoursVar]: _.get(_.first(serverObj), [sessionHoursVar], 0) + _.get(obj, 'minutesPlayed', 0) } },
+									function (err) {
+										if (err) {reject(err)}
+										resolve();
+									}
+								);
+							}
+						});
+					}
+				});
+			}
+			if (action === 'resetMinutesPlayed') {
+				return new Promise(function(resolve, reject) {
+					if (obj._id) {
+						let sessionHoursVar = 'currentSessionHoursPlayed_' + _.get(constants, ['side', _.get(obj, 'side')]);
+						SrvPlayer.update(
+							{_id: obj._id},
+							{$set: {[sessionHoursVar]: 0}},
+							function(err) {
+								if (err) { reject(err) }
+								resolve();
+							}
+						);
+					}
+				});
+			}
 		} else {
 			return Promise.reject('line:989, failed to connect to db: ', action, serverName, obj);
 		}
