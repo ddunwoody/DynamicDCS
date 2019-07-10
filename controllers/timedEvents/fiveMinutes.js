@@ -9,6 +9,6 @@ const minutesPlayedController = require('../action/minutesPlayed');
 _.set(exports, 'processFiveMinuteActions', function (serverName, fullySynced) {
 	if (fullySynced) {
 		radioTowerController.checkBaseWarnings(serverName);
-		hoursPlayedController.recordFiveMinutesPlayed(serverName);
+		minutesPlayedController.recordFiveMinutesPlayed(serverName);
 	}
 });
