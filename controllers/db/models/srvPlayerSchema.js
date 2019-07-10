@@ -95,11 +95,11 @@ const srvPlayerSchema = new Schema({
 			type: Number,
 			default: 0
 		},
-		currentSessionHoursPlayed_blue: {
+		currentSessionMinutesPlayed_blue: {
 			type: Number,
 			default: 0
 		},
-		currentSessionHoursPlayed_red: {
+		currentSessionMinutesPlayed_red: {
 			type: Number,
 			default: 0
 		}

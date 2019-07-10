@@ -11,10 +11,10 @@ _.assign(exports, {
 			.then(function (latestSession) {
 				let sideState = 'balance';
 				if (latestSession.name) {
-					if((latestSession.totalHoursPlayed_blue/latestSession.totalHoursPlayed_red) < 2) {
+					if((latestSession.totalMinutesPlayed_blue/latestSession.totalMinutesPlayed_red) < 2) {
 						sideState = blueStack
 					}
-					if((latestSession.totalHoursPlayed_red/latestSession.totalHoursPlayed_blue) < 2) {
+					if((latestSession.totalMinutesPlayed_red/latestSession.totalMinutesPlayed_blue) < 2) {
 						sideState = redStack
 					}
 				}
@@ -28,16 +28,16 @@ _.assign(exports, {
 	updateStatSession: (serverName, sessionName) => {
 		masterDBController.srvPlayerActions('read', serverName, {sessionName: sessionName})
 			.then(function (playerArray) {
-				let currentSessionHoursPlayed_blue = 0;
-				let currentSessionHoursPlayed_red = 0;
+				let currentSessionMinutesPlayed_blue = 0;
+				let currentSessionMinutesPlayed_red = 0;
 				_.forEach(playerArray, (pa) => {
-					currentSessionHoursPlayed_blue += _.get(pa, 'currentSessionHoursPlayed_blue', 0);
-					currentSessionHoursPlayed_red += _.get(pa, 'currentSessionHoursPlayed_red', 0);
+					currentSessionMinutesPlayed_blue += _.get(pa, 'currentSessionMinutesPlayed_blue', 0);
+					currentSessionMinutesPlayed_red += _.get(pa, 'currentSessionMinutesPlayed_red', 0);
 				});
 				masterDBController.statSessionActions('update', serverName, {
 					name: sessionName,
-					totalHoursPlayed_blue: currentSessionHoursPlayed_blue,
-					totalHoursPlayed_red: currentSessionHoursPlayed_red
+					totalMinutesPlayed_blue: currentSessionMinutesPlayed_blue,
+					totalMinutesPlayed_red: currentSessionMinutesPlayed_red
 				});
 			})
 			.catch(function (err) {
