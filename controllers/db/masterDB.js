@@ -1283,59 +1283,106 @@ _.assign(exports, {
 			return Promise.reject('line:1093, failed to connect to db: ', serverName);
 		}
 	},
-	statSessionActions: function (action, serverName, obj){
+	campaignsActions: function (action, serverName, obj){
 		var curDBConn = _.get(exports, ['dbObj', 'dbConn', serverName]);
 		if (curDBConn) {
-			const StatSession = curDBConn.model(serverName+'_statSession', _.get(exports, 'dbObj.statSessionSchema'));
+			const Campaigns = curDBConn.model(serverName+'_campaigns', _.get(exports, 'dbObj.campaignsSchema'));
 			if (action === 'read') {
 				return new Promise(function(resolve, reject) {
-					StatSession.find(function (err, statSession) {
+					Campaigns.find(function (err, campaigns) {
 						if (err) { reject(err) }
-						resolve(statSession);
+						resolve(campaigns);
 					});
 				});
 			}
 
 			if (action === 'readLatest') {
 				return new Promise(function(resolve, reject) {
-					StatSession.findOne().sort({ field: 'asc', createdAt: -1 }).limit(1).exec(function (err, statSession) {
+					Campaigns.findOne().sort({ field: 'asc', createdAt: -1 }).limit(1).exec(function (err, campaigns) {
 						if (err) { reject(err) }
-						resolve(statSession);
+						resolve(campaigns);
 					});
 				});
 			}
 			if(action === 'update') {
 				return new Promise(function(resolve, reject) {
-					StatSession.update(
+					Campaigns.update(
 						{name: obj.name},
 						{$set: obj},
-						function(err, statsession) {
+						function(err, campaigns) {
 							if (err) { reject(err) }
-							resolve(statsession);
+							resolve(campaigns);
 						}
 					);
 				});
 			}
 			if(action === 'save') {
 				return new Promise(function(resolve, reject) {
-					StatSession.find({_id: obj._id}, function (err, sessionObj) {
-						if (err) {
-							reject(err)
-						}
-						if (sessionObj.length === 0) {
-							const statsession = new StatSession(obj);
-							statsession.save(function (err, statSession) {
-								if (err) {
-									reject(err)
-								}
-								resolve(statSession);
+					Campaigns.find({_id: obj._id}, function (err, campaignsObj) {
+						if (err) {reject(err)}
+						if (campaignsObj.length === 0) {
+							const campaigns = new Campaigns(obj);
+							campaigns.save(function (err, campaignsObj) {
+								if (err) {reject(err)}
+								resolve(campaignsObj);
 							});
 						}
 					});
 				});
 			}
 		} else {
-			return Promise.reject('line:1148, failed to connect to db: ', serverName);
+			return Promise.reject('line:1334, failed to connect to db: ', serverName);
+		}
+	},
+	sessionsActions: function (action, serverName, obj){
+		var curDBConn = _.get(exports, ['dbObj', 'dbConn', serverName]);
+		if (curDBConn) {
+			const Sessions = curDBConn.model(serverName+'_sessions', _.get(exports, 'dbObj.sessionsSchema'));
+			if (action === 'read') {
+				return new Promise(function(resolve, reject) {
+					Sessions.find(function (err, sessions) {
+						if (err) { reject(err) }
+						resolve(sessions);
+					});
+				});
+			}
+
+			if (action === 'readLatest') {
+				return new Promise(function(resolve, reject) {
+					Sessions.findOne().sort({ field: 'asc', createdAt: -1 }).limit(1).exec(function (err, sessions) {
+						if (err) { reject(err) }
+						resolve(sessions);
+					});
+				});
+			}
+			if(action === 'update') {
+				return new Promise(function(resolve, reject) {
+					Sessions.update(
+						{name: obj.name},
+						{$set: obj},
+						function(err, sessions) {
+							if (err) { reject(err) }
+							resolve(sessions);
+						}
+					);
+				});
+			}
+			if(action === 'save') {
+				return new Promise(function(resolve, reject) {
+					Sessions.find({_id: obj._id}, function (err, sessionsObj) {
+						if (err) {reject(err)}
+						if (sessionsObj.length === 0) {
+							const sessions = new Sessions(obj);
+							sessions.save(function (err, sessionObj) {
+								if (err) {reject(err)}
+								resolve(sessionObj);
+							});
+						}
+					});
+				});
+			}
+		} else {
+			return Promise.reject('line:1385, failed to connect to db: ', serverName);
 		}
 	},
 	unitActions: function (action, serverName, obj){

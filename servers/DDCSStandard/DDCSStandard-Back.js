@@ -37,7 +37,7 @@ masterDBController.initDB(serverName, masterServer)
 				}, 5 * 1000);
 
 				_.set(exports, 'getLatestSession', function (serverName) {
-					masterDBController.statSessionActions('readLatest', serverName, {})
+					masterDBController.sessionsActions('readLatest', serverName, {})
 						.then(function (latestSession) {
 							if (latestSession) {
 								if (_.get(exports, 'sessionName') !== latestSession.name) {

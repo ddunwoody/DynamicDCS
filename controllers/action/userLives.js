@@ -14,7 +14,7 @@ _.assign(exports, {
 		var oneMin = 60 * 1000;
 		var redAll;
 		var serverAlloc = {};
-		return masterDBController.statSessionActions('readLatest', serverName, {})
+		return masterDBController.sessionsActions('readLatest', serverName, {})
 			.then(function (latestSession) {
 				if (latestSession.name) {
 					return masterDBController.srvPlayerActions('read', serverName, {sessionName: latestSession.name})
@@ -190,7 +190,7 @@ _.assign(exports, {
 		;
 	},
 	checkAircraftCosts: function (serverName) {
-		masterDBController.statSessionActions('readLatest', serverName, {})
+		masterDBController.sessionsActions('readLatest', serverName, {})
 			.then(function (latestSession) {
 				var mesg;
 				if (latestSession.name) {

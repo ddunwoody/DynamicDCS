@@ -16,7 +16,7 @@ _.assign(exports, {
 					if (!serverDBObj) {
 						masterDBController.connectDB(server.ip, serverName);
 					}
-					masterDBController.statSessionActions('readLatest', serverName)
+					masterDBController.sessionsActions('readLatest', serverName)
 						.then(function (lastSession) {
 							masterDBController.serverActions('update', {
 								name: serverName,

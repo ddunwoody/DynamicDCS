@@ -72,7 +72,7 @@ masterDBController.initDB('DDCS')
 		});
 		router.route('/srvPlayers/:serverName')
 			.get(function (req, res) {
-				masterDBController.statSessionActions('readLatest', req.params.serverName)
+				masterDBController.sessionsActions('readLatest', req.params.serverName)
 					.then(function(sesResp) {
 						masterDBController.srvPlayerActions('read', req.params.serverName, {sessionName: sesResp.name})
 							.then(function (resp) {
@@ -189,7 +189,7 @@ masterDBController.initDB('DDCS')
 		router.route('/srvEvents/:serverName')
 			.get(function (req, res) {
 				_.set(req, 'body.serverName', req.params.serverName);
-				masterDBController.statSessionActions('readLatest', req.body.serverName, req.body)
+				masterDBController.sessionsActions('readLatest', req.body.serverName, req.body)
 					.then(function(sesResp) {
 						_.set(req, 'body.sessionName', _.get(sesResp, 'name'));
 						masterDBController.simpleStatEventActions('read', req.body.serverName, req.body)

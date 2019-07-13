@@ -7,7 +7,7 @@ const masterDBController = require('../db/masterDB');
 
 _.assign(exports, {
 	checkCurrentPlayerBalance: (serverName) => {
-		masterDBController.statSessionActions('readLatest', serverName, {})
+		masterDBController.sessionsActions('readLatest', serverName, {})
 			.then(function (latestSession) {
 				let sideState = 'balance';
 				if (latestSession.name) {
@@ -34,7 +34,7 @@ _.assign(exports, {
 					currentSessionMinutesPlayed_blue += _.get(pa, 'currentSessionMinutesPlayed_blue', 0);
 					currentSessionMinutesPlayed_red += _.get(pa, 'currentSessionMinutesPlayed_red', 0);
 				});
-				masterDBController.statSessionActions('update', serverName, {
+				masterDBController.sessionsActions('update', serverName, {
 					name: sessionName,
 					totalMinutesPlayed_blue: currentSessionMinutesPlayed_blue,
 					totalMinutesPlayed_red: currentSessionMinutesPlayed_red
@@ -46,7 +46,7 @@ _.assign(exports, {
 		;
 	},
 	recordFiveMinutesPlayed: (serverName) => {
-		masterDBController.statSessionActions('readLatest', serverName, {})
+		masterDBController.sessionsActions('readLatest', serverName, {})
 			.then(function (latestSession) {
 				masterDBController.srvPlayerActions('read', serverName, {sessionName: latestSession.name})
 					.then(function (playerArray) {
@@ -70,7 +70,7 @@ _.assign(exports, {
 		;
 	},
 	resetMinutesPlayed: (serverName) => {
-		masterDBController.statSessionActions('readLatest', serverName, {})
+		masterDBController.sessionsActions('readLatest', serverName, {})
 			.then(function (latestSession) {
 				masterDBController.srvPlayerActions('read', serverName, {sessionName: latestSession.name})
 					.then(function (playerArray) {

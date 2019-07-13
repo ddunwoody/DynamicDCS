@@ -80,14 +80,14 @@ masterDBController.initDB(serverName, masterServer)
 							_.set(exports, ['curAbsTime'], curAbs);
 							console.log('set new session');
 							minutesPlayedController.resetMinutesPlayed(serverName);
-							masterDBController.statSessionActions('save', serverName, newSession)
+							masterDBController.sessionsActions('save', serverName, newSession)
 								.catch(function (err) {
 									console.log('line49', err);
 								})
 							;
 						} else {
 							console.log('use existing session: ', sessionName);
-							masterDBController.statSessionActions('update', serverName, newSession)
+							masterDBController.sessionsActions('update', serverName, newSession)
 								.catch(function (err) {
 									console.log('line55', err);
 								})
@@ -236,7 +236,7 @@ masterDBController.initDB(serverName, masterServer)
 
 				setInterval(function () {
 					if (_.get(exports, 'sessionName')) {
-						masterDBController.statSessionActions('update', serverName, {
+						masterDBController.sessionsActions('update', serverName, {
 							_id: _.get(exports, 'sessionName'),
 							name: _.get(exports, 'sessionName'),
 							startAbsTime: _.get(exports, 'startAbsTime'),

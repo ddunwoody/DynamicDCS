@@ -6,7 +6,7 @@ const mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 // Schema defines how chat messages will be stored in MongoDB
-const StatSessionSchema = new Schema({
+const CampaignsSchema = new Schema({
 		_id: {
 			type: String,
 			required: true
@@ -14,12 +14,6 @@ const StatSessionSchema = new Schema({
 		name: {
 			type: String,
 			required: true
-		},
-		startAbsTime: {
-			type: Number
-		},
-		curAbsTime: {
-			type: Number
 		},
 		totalMinutesPlayed_blue: {
 			type: Number,
@@ -36,4 +30,4 @@ const StatSessionSchema = new Schema({
 	}
 );
 
-module.exports = StatSessionSchema;
+module.exports = CampaignsSchema;

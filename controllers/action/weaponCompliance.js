@@ -34,7 +34,7 @@ _.set(exports, 'checkWeaponComplianceOnTakeoff', function (serverName, iPlayer, 
 });
 
 _.set(exports, 'checkAircraftWeaponCompliance', function (serverName) {
-	masterDBController.statSessionActions('readLatest', serverName, {})
+	masterDBController.sessionsActions('readLatest', serverName, {})
 		.then(function (latestSession) {
 			if (latestSession.name) {
 				masterDBController.srvPlayerActions('read', serverName, {sessionName: latestSession.name, playername: {$ne: ''}})

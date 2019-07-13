@@ -238,7 +238,7 @@ _.set(exports, 'checkForComms', function (serverName, isDiscordAllowed, playerAr
     dBot.kickForNoComms(serverName, removeServerHost, isDiscordAllowed);
     /*
     var fiveMinsAgo = new Date().getTime() - (5 * oneMin);
-    masterDBController.statSessionActions('readLatest', serverName, {})
+    masterDBController.sessionsActions('readLatest', serverName, {})
         .then(function (latestSession) {
             if (latestSession.name) {
                 masterDBController.srvPlayerActions('read', serverName, {

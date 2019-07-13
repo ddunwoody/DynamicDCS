@@ -8,7 +8,7 @@ const masterDBController = require('../db/masterDB');
 _.set(exports, 'setSideLockFlags', function (serverName) {
 	// console.log('SETSIDELOCKGFLAGS ');
 	var playerSideLockTable = [];
-	masterDBController.statSessionActions('readLatest', serverName, {})
+	masterDBController.sessionsActions('readLatest', serverName, {})
 		.then(function (latestSession) {
 			if (latestSession.name) {
 				masterDBController.srvPlayerActions('read', serverName, {sessionName: latestSession.name})
