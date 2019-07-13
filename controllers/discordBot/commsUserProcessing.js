@@ -11,7 +11,7 @@ var dBot = {};
 var SRSServers = {
   	// DDCSStandard: 'srs.dynamicdcs.com:5002',
 	DDCS1978ColdWar: 'srs.dynamicdcs.com:5002',
-	DDCSHardcore: 'srs.dynamicdcs.com:5010'
+	DDCSModern: 'srs.dynamicdcs.com:5010'
 };
 
 exports.oldestAllowedUser = 300;

@@ -13,9 +13,9 @@ var twoMin = 2 * 60 * 1000;
 
 const SRSFilePaths = [
     // { name: 'DDCS1978ColdWar', path: 'C:/Users/andre/Desktop/testClient/2/clients-list.json' },
-    // { name: 'DDCSHardcore', path: 'C:/Users/andre/Desktop/testClient/1/clients-list.json' }
+    // { name: 'DDCSModern', path: 'C:/Users/andre/Desktop/testClient/1/clients-list.json' }
 	{ name: 'DDCS1978ColdWar', path: 'C:/Users/MegaServer/Desktop/SRS/DDCS-Standard/clients-list.json' },
-	{ name: 'DDCSHardcore', path: 'C:/Users/MegaServer/Desktop/SRS/DDCS-Hardcore/clients-list.json' }
+	{ name: 'DDCSModern', path: 'C:/Users/MegaServer/Desktop/SRS/DDCS-Hardcore/clients-list.json' }
 	];
 
 fs.readFileAsyncArray = function(fileObj) {

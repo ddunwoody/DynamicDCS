@@ -50,8 +50,8 @@ module.exports = {
           }
       },
       {
-          name: 'DDCS_Hardcore_Front',
-          script: 'servers/DDCSHardcore/DDCSHardcore-Front.js',
+          name: 'DDCS_Modern_Front',
+          script: 'servers/DDCSModern/DDCSModern-Front.js',
           // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
           instances: 1,
           autorestart: true,
@@ -65,8 +65,8 @@ module.exports = {
           }
       },
       {
-          name: 'DDCS_Hardcore_Back',
-          script: 'servers/DDCSHardcore/DDCSHardcore-Back.js',
+          name: 'DDCS_Modern_Back',
+          script: 'servers/DDCSModern/DDCSModern-Back.js',
           // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
           instances: 1,
           autorestart: true,
