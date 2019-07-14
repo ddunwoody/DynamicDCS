@@ -51,36 +51,35 @@ _.set(exports, 'processPlayerEvent', function (serverName, sessionName, playerAr
 												15
 											);
 										}
-									} else {
-										if (isArtilleryCmdr || isForwardObserver) {
-											masterDBController.srvPlayerActions('read', serverName, { _id: player.ucid })
-												.then(function (srvPlayer) {
-													var curPlayer = _.first(srvPlayer);
-													if (curPlayer.gciAllowed || isForwardObserver) {
-														if (curPlayer.sideLock === 0) {
-															masterDBController.srvPlayerActions('update', serverName, {
-																_id: player.ucid,
-																sideLock: player.side,
-																sideLockTime: new Date().getTime() + (60 * 60 * 1000)
+									}
+									if (isArtilleryCmdr || isForwardObserver) {
+										masterDBController.srvPlayerActions('read', serverName, { _id: player.ucid })
+											.then(function (srvPlayer) {
+												var curPlayer = _.first(srvPlayer);
+												if (curPlayer.gciAllowed || isForwardObserver) {
+													if (curPlayer.sideLock === 0) {
+														masterDBController.srvPlayerActions('update', serverName, {
+															_id: player.ucid,
+															sideLock: player.side,
+															sideLockTime: new Date().getTime() + (60 * 60 * 1000)
+														})
+															.then(function (srvPlayer) {
+																sideLockController.setSideLockFlags(serverName);
+																console.log(player.name + ' is now locked to ' + player.side);
 															})
-																.then(function (srvPlayer) {
-																	sideLockController.setSideLockFlags(serverName);
-																	console.log(player.name + ' is now locked to ' + player.side);
-																})
-																.catch(function (err) {
-																	console.log('line120', err);
-																})
-															;
-														}
-													} else {
-														DCSLuaCommands.forcePlayerSpectator(serverName, player.id, 'You are not allowed to use GCI/Tac Commander slot. Please contact a Mod for more information.');
+															.catch(function (err) {
+																console.log('line120', err);
+															})
+														;
 													}
-												})
-												.catch(function (err) {
-													console.log('line120', err);
-												})
-											;
-										}
+												} else {
+													DCSLuaCommands.forcePlayerSpectator(serverName, player.id, 'You are not allowed to use GCI/Tac Commander slot. Please contact a Mod for more information.');
+												}
+											})
+											.catch(function (err) {
+												console.log('line120', err);
+											})
+										;
 									}
 								}
 							})
