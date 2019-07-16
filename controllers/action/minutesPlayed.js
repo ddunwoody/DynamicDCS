@@ -25,7 +25,36 @@ _.assign(exports, {
 			})
 		;
 	},
-	updateStatSession: (serverName, sessionName) => {
+	updateLatestCampaign: (serverName) => {
+		masterDBController.campaignsActions('readLatest', serverName, {})
+			.then(function (campaign) {
+				if (campaign) {
+					masterDBController.sessionsActions('read', serverName, {campaignName: campaign.name})
+						.then(function (campSessions) {
+							let totalMinutesPlayed_blue = 0;
+							let totalMinutesPlayed_red = 0;
+							_.forEach(campSessions, (pa) => {
+								totalMinutesPlayed_blue += _.get(pa, 'totalMinutesPlayed_blue', 0);
+								totalMinutesPlayed_red += _.get(pa, 'totalMinutesPlayed_red', 0);
+							});
+							masterDBController.campaignsActions('update', serverName, {
+								name: campaign.name,
+								totalMinutesPlayed_blue: totalMinutesPlayed_blue,
+								totalMinutesPlayed_red: totalMinutesPlayed_red
+							});
+						})
+						.catch(function (err) {
+							console.log('line54', err);
+						})
+					;
+				}
+			})
+			.catch(function (err) {
+				console.log('line60', err);
+			})
+		;
+	},
+	updateSession: (serverName, sessionName) => {
 		masterDBController.srvPlayerActions('read', serverName, {sessionName: sessionName})
 			.then(function (playerArray) {
 				let currentSessionMinutesPlayed_blue = 0;
@@ -38,7 +67,14 @@ _.assign(exports, {
 					name: sessionName,
 					totalMinutesPlayed_blue: currentSessionMinutesPlayed_blue,
 					totalMinutesPlayed_red: currentSessionMinutesPlayed_red
-				});
+				})
+					.then(function() {
+						exports.updateLatestCampaign(serverName);
+					})
+					.catch(function (err) {
+						console.log('err line49: ', err);
+					})
+				;
 			})
 			.catch(function (err) {
 				console.log('err line17: ', err);
@@ -55,9 +91,15 @@ _.assign(exports, {
 								_id: player._id,
 								minutesPlayed: 5,
 								side: player.side
-							});
-						});
-						exports.updateStatSession(serverName, latestSession);
+							})
+								.then(function() {
+									exports.updateSession(serverName, latestSession);
+								})
+								.catch(function (err) {
+									console.log('err line62: ', err);
+								})
+							;
+						})
 					})
 					.catch(function (err) {
 						console.log('err line62: ', err);
@@ -72,19 +114,21 @@ _.assign(exports, {
 	resetMinutesPlayed: (serverName) => {
 		masterDBController.sessionsActions('readLatest', serverName, {})
 			.then(function (latestSession) {
-				masterDBController.srvPlayerActions('read', serverName, {sessionName: latestSession.name})
-					.then(function (playerArray) {
-						_.forEach(playerArray, function (player) {
-							masterDBController.srvPlayerActions('resetMinutesPlayed', serverName, {
-								_id: player._id,
-								side: player.side
+				if (latestSession) {
+					masterDBController.srvPlayerActions('read', serverName, {sessionName: latestSession.name})
+						.then(function (playerArray) {
+							_.forEach(playerArray, function (player) {
+								masterDBController.srvPlayerActions('resetMinutesPlayed', serverName, {
+									_id: player._id,
+									side: player.side
+								});
 							});
-						});
-					})
-					.catch(function (err) {
-						console.log('err line84: ', err);
-					})
-				;
+						})
+						.catch(function (err) {
+							console.log('err line84: ', err);
+						})
+					;
+				}
 			})
 			.catch(function (err) {
 				console.log('err line89: ', err);

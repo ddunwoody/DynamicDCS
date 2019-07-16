@@ -30,7 +30,7 @@ _.set(exports, 'sendMissingUnits', function (serverName, serverUnitArray) {
 							};
 							masterDBController.unitActions('update', serverName, curDead)
 								.catch(function (err) {
-									console.log('erroring line36: ', err);
+									console.log('erroring line33: ', err);
 								})
 							;
 						})

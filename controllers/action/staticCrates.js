@@ -20,7 +20,7 @@ _.assign(exports, {
 				console.log('delCrate: ',  eCrate._id);
 				masterDBController.staticCrateActions('delete', serverName, {_id: eCrate._id})
 					.catch(function (err) {
-						console.log('erroring line59: ', err);
+						console.log('erroring line23: ', err);
 					})
 				;
 				groupController.destroyUnit(serverName, eCrate.name);

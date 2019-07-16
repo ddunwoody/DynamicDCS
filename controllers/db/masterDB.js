@@ -1162,6 +1162,7 @@ _.assign(exports, {
 			}
 			if (action === 'resetMinutesPlayed') {
 				return new Promise(function(resolve, reject) {
+					// console.log('RESETRESETRESETRESETRESETRESETRESETRESETRESETRESETRESETRESETRESETRESET');
 					if (obj._id) {
 						let sessionMinutesVar = 'currentSessionMinutesPlayed_' + _.get(constants, ['side', _.get(obj, 'side')]);
 						SrvPlayer.update(
@@ -1322,9 +1323,9 @@ _.assign(exports, {
 						if (err) {reject(err)}
 						if (campaignsObj.length === 0) {
 							const campaigns = new Campaigns(obj);
-							campaigns.save(function (err, campaignsObj) {
+							campaigns.save(function (err, campObj) {
 								if (err) {reject(err)}
-								resolve(campaignsObj);
+								resolve(campObj);
 							});
 						}
 					});
@@ -1340,7 +1341,7 @@ _.assign(exports, {
 			const Sessions = curDBConn.model(serverName+'_sessions', _.get(exports, 'dbObj.sessionsSchema'));
 			if (action === 'read') {
 				return new Promise(function(resolve, reject) {
-					Sessions.find(function (err, sessions) {
+					Sessions.find(obj).exec(function (err, sessions) {
 						if (err) { reject(err) }
 						resolve(sessions);
 					});
@@ -1373,9 +1374,9 @@ _.assign(exports, {
 						if (err) {reject(err)}
 						if (sessionsObj.length === 0) {
 							const sessions = new Sessions(obj);
-							sessions.save(function (err, sessionObj) {
+							sessions.save(function (err, sessObj) {
 								if (err) {reject(err)}
-								resolve(sessionObj);
+								resolve(sessObj);
 							});
 						}
 					});

@@ -63,10 +63,9 @@ masterDBController.initDB(serverName, masterServer)
 				}, 3 * _.get(constants, 'time.sec'));
 
 				_.set(exports, 'getLatestSession', function (serverName, serverEpoc, startAbs, curAbs) {
-					console.log('sn: ', serverEpoc, startAbs, curAbs, _.get(exports, 'sessionName'));
 					if (serverEpoc) {
-						var sessionName = serverName + '_' + serverEpoc;
-						var newSession = {
+						let sessionName = serverName + '_' + serverEpoc;
+						let newSession = {
 							_id: sessionName,
 							name: sessionName
 						};
@@ -74,25 +73,45 @@ masterDBController.initDB(serverName, masterServer)
 							_.set(newSession, 'startAbsTime', startAbs);
 							_.set(newSession, 'curAbsTime', curAbs);
 						}
-						if (sessionName !== _.get(exports, ['sessionName'], '') || _.get(exports, ['curAbsTime'], 0) > curAbs) {
-							console.log('set new session: ', sessionName);
-							_.set(exports, ['sessionName'], sessionName);
-							_.set(exports, ['curAbsTime'], curAbs);
-							console.log('set new session');
-							minutesPlayedController.resetMinutesPlayed(serverName);
-							masterDBController.sessionsActions('save', serverName, newSession)
-								.catch(function (err) {
-									console.log('line49', err);
-								})
-							;
-						} else {
-							console.log('use existing session: ', sessionName);
-							masterDBController.sessionsActions('update', serverName, newSession)
-								.catch(function (err) {
-									console.log('line55', err);
-								})
-							;
-						}
+						masterDBController.sessionsActions('readLatest', serverName, {})
+							.then(function (latestSession) {
+								// console.log('sn: ', serverEpoc, startAbs, curAbs, latestSession.name);
+								if (sessionName !== latestSession.name || _.get(exports, ['curAbsTime'], 0) > curAbs) {
+									minutesPlayedController.resetMinutesPlayed(serverName);
+									masterDBController.campaignsActions('readLatest', serverName, {})
+										.then(function (campaign) {
+											if (campaign) {
+												_.set(newSession, 'campaignName', campaign.name);
+												masterDBController.sessionsActions('save', serverName, newSession)
+													.then(function() {
+														_.set(exports, 'sessionName', sessionName)
+													})
+													.catch(function (err) {
+														console.log('line49', err);
+													})
+												;
+											}
+										})
+										.catch(function (err) {
+											console.log('line90', err);
+										})
+									;
+								} else {
+									console.log('use existing session: ', sessionName);
+									masterDBController.sessionsActions('update', serverName, newSession)
+										.then(function() {
+											_.set(exports, 'sessionName', sessionName);
+										})
+										.catch(function (err) {
+											console.log('line55', err);
+										})
+									;
+								}
+							})
+							.catch(function (err) {
+								console.log('line49', err);
+							})
+						;
 					}
 				});
 

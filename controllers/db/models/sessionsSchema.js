@@ -15,6 +15,10 @@ const SessionsSchema = new Schema({
 			type: String,
 			required: true
 		},
+		campaignName: {
+			type: String,
+			required: true
+		},
 		startAbsTime: {
 			type: Number
 		},

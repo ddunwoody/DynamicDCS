@@ -13,7 +13,7 @@ const airbaseSyncController = require('../../controllers/serverToDbSync/airbaseS
 const sychrontronController = require('../../controllers/sychronize/Sychrontron');
 const recoveryController = require('../../controllers/sychronize/recovery');
 const jtacController = require('../../controllers/action/jtac');
-const minutesPlayedController = require('../../controller/action/minutesPlayed');
+const minutesPlayedController = require('../../controllers/action/minutesPlayed');
 const serverTimerController = require('../../controllers/action/serverTimer');
 const processEventHit = require('../../controllers/events/frontend/S_EVENT_HIT');
 const processEventTakeoff = require('../../controllers/events/frontend/S_EVENT_TAKEOFF');
@@ -63,10 +63,9 @@ masterDBController.initDB(serverName, masterServer)
 				}, 3 * _.get(constants, 'time.sec'));
 
 				_.set(exports, 'getLatestSession', function (serverName, serverEpoc, startAbs, curAbs) {
-					console.log('sn: ', serverEpoc, startAbs, curAbs, _.get(exports, 'sessionName'));
 					if (serverEpoc) {
-						var sessionName = serverName + '_' + serverEpoc;
-						var newSession = {
+						let sessionName = serverName + '_' + serverEpoc;
+						let newSession = {
 							_id: sessionName,
 							name: sessionName
 						};
@@ -74,25 +73,45 @@ masterDBController.initDB(serverName, masterServer)
 							_.set(newSession, 'startAbsTime', startAbs);
 							_.set(newSession, 'curAbsTime', curAbs);
 						}
-						if (sessionName !== _.get(exports, ['sessionName'], '') || _.get(exports, ['curAbsTime'], 0) > curAbs) {
-							console.log('set new session: ', sessionName);
-							_.set(exports, ['sessionName'], sessionName);
-							_.set(exports, ['curAbsTime'], curAbs);
-							console.log('set new session');
-							minutesPlayedController.resetMinutesPlayed(serverName);
-							masterDBController.sessionsActions('save', serverName, newSession)
-								.catch(function (err) {
-									console.log('line49', err);
-								})
-							;
-						} else {
-							console.log('use existing session: ', sessionName);
-							masterDBController.sessionsActions('update', serverName, newSession)
-								.catch(function (err) {
-									console.log('line55', err);
-								})
-							;
-						}
+						masterDBController.sessionsActions('readLatest', serverName, {})
+							.then(function (latestSession) {
+								// console.log('sn: ', serverEpoc, startAbs, curAbs, latestSession.name);
+								if (sessionName !== latestSession.name || _.get(exports, ['curAbsTime'], 0) > curAbs) {
+									minutesPlayedController.resetMinutesPlayed(serverName);
+									masterDBController.campaignsActions('readLatest', serverName, {})
+										.then(function (campaign) {
+											if (campaign) {
+												_.set(newSession, 'campaignName', campaign.name);
+												masterDBController.sessionsActions('save', serverName, newSession)
+													.then(function() {
+														_.set(exports, 'sessionName', sessionName)
+													})
+													.catch(function (err) {
+														console.log('line49', err);
+													})
+												;
+											}
+										})
+										.catch(function (err) {
+											console.log('line90', err);
+										})
+									;
+								} else {
+									console.log('use existing session: ', sessionName);
+									masterDBController.sessionsActions('update', serverName, newSession)
+										.then(function() {
+											_.set(exports, 'sessionName', sessionName);
+										})
+										.catch(function (err) {
+											console.log('line55', err);
+										})
+									;
+								}
+							})
+							.catch(function (err) {
+								console.log('line49', err);
+							})
+						;
 					}
 				});
 
@@ -105,7 +124,7 @@ masterDBController.initDB(serverName, masterServer)
 					if (!sychrontronController.isServerSynced) {
 						console.log('SYNC: ', sychrontronController.isServerSynced);
 					}
-					// console.log('CB: ', cbArray.que);
+					// console.log('CB: ', !_.get(exports, 'sessionName'));
 					_.set(exports, 'curServerUnitCnt', cbArray.unitCount);
 					if(!_.get(exports, 'sessionName')) {
 						exports.getLatestSession(serverName, cbArray.epoc, cbArray.startAbsTime,  cbArray.curAbsTime);
@@ -124,32 +143,6 @@ masterDBController.initDB(serverName, masterServer)
 								// console.log('CB: ', queObj);
 								menuCmdsController.menuCmdProcess(serverName, exports.sessionName, queObj);
 							}
-
-							/*
-                            //Cmd Response
-                            if (_.get(queObj, 'action') === 'CMDRESPONSE') {
-                                _.set(queObj, 'sessionName', sessionName);
-                                //send response straight to client id
-                                curServers[serverName].updateQue.q1.push(_.cloneDeep(queObj));
-                                curServers[serverName].updateQue.q2.push(_.cloneDeep(queObj));
-                                curServers[serverName].updateQue.qadmin.push(_.cloneDeep(queObj));
-                            }
-                            */
-
-							/*
-                            //mesg
-                            if (_.get(queObj, 'action') === 'MESG') {
-                                _.set(queObj, 'sessionName', sessionName);
-                                // console.log('mesg: ', queObj);
-                                if (_.get(queObj, 'data.playerID')) {
-                                    if (_.isNumber(_.get(_.find(curServers[serverName].serverObject.players, {'id': _.get(queObj, 'data.playerID')}), 'side', 0))) {
-                                        curServers[serverName].updateQue['q' + _.get(_.find(curServers[serverName].serverObject.players, {'id': _.get(queObj, 'data.playerID')}), 'side', 0)]
-                                            .push(_.cloneDeep(queObj));
-                                        curServers[serverName].updateQue.qadmin.push(_.cloneDeep(queObj));
-                                    }
-                                }
-                            }
-                            */
 
 							if ((_.get(queObj, 'action') === 'S_EVENT_HIT') && sychrontronController.isServerSynced) {
 								processEventHit.processEventHit(serverName, exports.sessionName, queObj);
@@ -197,7 +190,6 @@ masterDBController.initDB(serverName, masterServer)
 								processEventPlayerLeaveUnit.processEventPlayerLeaveUnit(serverName, exports.sessionName, queObj);
 							}
 
-							// line of sight callback from server
 							if ((_.get(queObj, 'action') === 'LOSVISIBLEUNITS') && sychrontronController.isServerSynced) {
 								jtacController.processLOSEnemy(serverName, queObj);
 							}

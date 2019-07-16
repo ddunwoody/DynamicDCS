@@ -2173,12 +2173,12 @@ _.set(exports, 'spawnLogisticCmdCenter', function (serverName, staticObj, init, 
 	var actionObj = {actionObj: sendClient, queName: 'clientArray'};
 	masterDBController.cmdQueActions('save', serverName, actionObj)
 		.catch(function (err) {
-			console.log('erroring line592: ', err);
+			console.log('erroring line2176: ', err);
 		})
 	;
 	masterDBController.unitActions('updateByName', serverName, {name: curGrpObj.name, coalition: curGrpObj.coalition, country: curGrpObj.country, dead:false})
 		.catch(function (err) {
-			console.log('erroring line595: ', err);
+			console.log('erroring line2181: ', err);
 		})
 	;
 });
@@ -2201,12 +2201,12 @@ _.set(exports, 'spawnRadioTower', function (serverName, staticObj, init, baseObj
 	var actionObj = {actionObj: sendClient, queName: 'clientArray'};
 	masterDBController.cmdQueActions('save', serverName, actionObj)
 		.catch(function (err) {
-			console.log('erroring line592: ', err);
+			console.log('erroring line2204: ', err);
 		})
 	;
 	masterDBController.unitActions('updateByName', serverName, {name: curGrpObj.name, coalition: curGrpObj.coalition, country: curGrpObj.country, dead:false})
 		.catch(function (err) {
-			console.log('erroring line595: ', err);
+			console.log('erroring line2209: ', err);
 		})
 	;
 });

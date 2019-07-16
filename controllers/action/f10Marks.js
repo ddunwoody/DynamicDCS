@@ -29,7 +29,7 @@ _.assign(exports, {
 									.then(function () {
 										masterDBController.baseActions('update', serverName, {_id: _.get(base, 'name'), baseMarkId: randomMarkId})
 											.catch(function (err) {
-												console.log('erroring line36: ', err);
+												console.log('erroring line32: ', err);
 											})
 										;
 									})
@@ -55,7 +55,7 @@ _.assign(exports, {
 							.then(function () {
 								masterDBController.baseActions('update', serverName, {_id: _.get(base, 'name'), baseMarkId: randomMarkId})
 									.catch(function (err) {
-										console.log('erroring line36: ', err);
+										console.log('erroring line58: ', err);
 									})
 								;
 							})
@@ -96,7 +96,7 @@ _.assign(exports, {
 								.then(function () {
 									masterDBController.unitActions('update', serverName, {_id: _.get(curUnit, '_id'), markId: randomMarkId})
 										.catch(function (err) {
-											console.log('erroring line36: ', err);
+											console.log('erroring line99: ', err);
 										})
 									;
 								})
@@ -123,7 +123,7 @@ _.assign(exports, {
 						.then(function () {
 							masterDBController.unitActions('update', serverName, {_id: _.get(curUnit, '_id'), markId: randomMarkId})
 								.catch(function (err) {
-									console.log('erroring line36: ', err);
+									console.log('erroring line126: ', err);
 								})
 							;
 						})
@@ -135,7 +135,7 @@ _.assign(exports, {
 				//console.log('CMD: ', curCMD);
 			})
 			.catch(function (err) {
-				console.log('erroring line36: ', err);
+				console.log('erroring line138: ', err);
 			})
 		;
 	}

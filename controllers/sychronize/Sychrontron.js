@@ -41,9 +41,24 @@ _.set(exports, 'syncType', function (serverName, serverUnitCount) {
 							.then(function () {
 								if (units.length === 0) { // DB is empty
 									console.log('DB & Server is empty of Units, Spawn New Units');
-									masterUnitCount = groupController.spawnNewMapGrps(serverName); //respond with server spawned num
-									exports.processInstructions = true;
-									console.log('processed Instructons 1: ', exports.processInstructions);
+									var newCampaignName = serverName + '_' + new Date().getTime();
+									masterDBController.campaignsActions('save', serverName, {_id: newCampaignName, name: newCampaignName})
+										.then(function () {
+											masterDBController.sessionsActions('save', serverName, {_id: newCampaignName, name: newCampaignName, campaignName: newCampaignName})
+												.then(function () {
+													masterUnitCount = groupController.spawnNewMapGrps(serverName); //respond with server spawned num
+													exports.processInstructions = true;
+													console.log('processed Instructons 1: ', exports.processInstructions);
+												})
+												.catch(function (err) {
+													console.log('line49', err);
+												})
+											;
+										})
+										.catch(function (err) {
+											console.log('erroring line59: ', err);
+										})
+									;
 								} else { // DB is FULL
 									console.log('DB has ' + units.length + ' Units, Respawn Them');
 									var filterStructure = _.filter(units, {category: 'STRUCTURE'});
@@ -64,7 +79,7 @@ _.set(exports, 'syncType', function (serverName, serverUnitCount) {
 										} else if (_.get(unit, 'type') === 'Comms tower M') {
 											groupController.spawnRadioTower(serverName, unit, true);
 										} else {
-											console.log('marking unit dead: ', unit);
+											// console.log('marking unit dead: ', unit);
 											curDead = {
 												_id: _.get(unit, 'name'),
 												name: _.get(unit, 'name'),
@@ -72,7 +87,7 @@ _.set(exports, 'syncType', function (serverName, serverUnitCount) {
 											};
 											masterDBController.unitActions('update', serverName, curDead)
 												.catch(function (err) {
-													console.log('erroring line36: ', err);
+													console.log('erroring line90: ', err);
 												})
 											;
 										}
@@ -188,7 +203,7 @@ _.set(exports, 'syncType', function (serverName, serverUnitCount) {
 				}
 			})
 			.catch(function (err) {
-				console.log('erroring line59: ', err);
+				console.log('erroring line206: ', err);
 			})
 		;
 	}

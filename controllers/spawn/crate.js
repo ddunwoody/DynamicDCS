@@ -20,7 +20,7 @@ _.set(exports, 'spawnLogiCrate', function (serverName, crateObj, init) {
 				var actionObj = {actionObj: sendClient, queName: 'clientArray'};
 				masterDBController.cmdQueActions('save', serverName, actionObj)
 					.catch(function (err) {
-						console.log('erroring line592: ', err);
+						console.log('erroring line23: ', err);
 					})
 				;
 			})
@@ -34,7 +34,7 @@ _.set(exports, 'spawnLogiCrate', function (serverName, crateObj, init) {
 		var actionObj = {actionObj: sendClient, queName: 'clientArray'};
 		masterDBController.cmdQueActions('save', serverName, actionObj)
 			.catch(function (err) {
-				console.log('erroring line592: ', err);
+				console.log('erroring line37: ', err);
 			})
 		;
 	}

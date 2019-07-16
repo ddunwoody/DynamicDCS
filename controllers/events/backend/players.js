@@ -84,7 +84,7 @@ _.set(exports, 'processPlayerEvent', function (serverName, sessionName, playerAr
 								}
 							})
 							.catch(function (err) {
-								console.log('err line596: ', err);
+								console.log('err line87: ', err);
 							})
 						;
 					}
