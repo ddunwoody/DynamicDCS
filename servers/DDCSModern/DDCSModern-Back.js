@@ -77,12 +77,7 @@ masterDBController.initDB(serverName, masterServer)
 									})
 								;
 								// console.log('mis: ', missionArray, missionPath); lastSentLoader curFilePath
-								serverTimerController.restartServer(
-									serverName,
-									missionPath + '_' +
-									_.get(constants, 'config.curSeason') + '_' +
-									_.random(1, _.get(constants, 'config.mapCount')) + '.miz'
-								);
+								serverTimerController.restartServer(serverName);
 								lastSentLoader = curTime;
 							}
 						}
