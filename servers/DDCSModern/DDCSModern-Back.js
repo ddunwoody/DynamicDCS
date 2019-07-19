@@ -69,7 +69,7 @@ masterDBController.initDB(serverName, masterServer)
 							if (_.last(missionFileArray) === 'Loader.miz' && curTime > lastSentLoader + _.get(constants, 'time.oneMin')) {
 								missionArray.pop();
 								missionPath = _.join(missionArray, '/') + '/' + _.first(missionFileArray);
-								console.log('missionPath: ', missionPath, serverName);
+								// console.log('missionPath: ', missionPath, serverName);
 								masterDBController.serverActions('update', {
 									name: serverName,
 									curFilePath: missionPath
