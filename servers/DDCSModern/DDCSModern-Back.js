@@ -16,9 +16,9 @@ const serverTimerController = require('../../controllers/action/serverTimer');
 
 //config
 var commsCounter = 0;
-var masterServer = '127.0.0.1';
+var masterServer = '192.168.44.60';
 var serverName = 'DDCSModern';
-var lastSentLoader;
+var lastSentLoader = new Date().getTime();
 
 masterDBController.initDB(serverName, masterServer)
 	.then(function() {
@@ -65,9 +65,11 @@ masterDBController.initDB(serverName, masterServer)
 							curTime = new Date().getTime();
 							missionArray = _.split(_.get(queObj, 'data'), '\\');
 							missionFileArray = _.split(_.last(missionArray), '_');
+							// console.log('missionTime: ', curTime, missionArray, missionFileArray, _.last(missionFileArray) === 'Loader.miz', curTime > lastSentLoader + _.get(constants, 'time.oneMin'), curTime, ' > ', lastSentLoader + _.get(constants, 'time.oneMin'), lastSentLoader);
 							if (_.last(missionFileArray) === 'Loader.miz' && curTime > lastSentLoader + _.get(constants, 'time.oneMin')) {
 								missionArray.pop();
 								missionPath = _.join(missionArray, '/') + '/' + _.first(missionFileArray);
+								console.log('missionPath: ', missionPath, serverName);
 								masterDBController.serverActions('update', {
 									name: serverName,
 									curFilePath: missionPath
@@ -76,7 +78,7 @@ masterDBController.initDB(serverName, masterServer)
 										console.log('line73: ', err);
 									})
 								;
-								// console.log('mis: ', missionArray, missionPath); lastSentLoader curFilePath
+								console.log('mis: ', missionArray, missionPath);
 								serverTimerController.restartServer(serverName);
 								lastSentLoader = curTime;
 							}
