@@ -3,11 +3,14 @@
  */
 
 const	_ = require('lodash');
+const constants = require('../constants');
 const masterDBController = require('../db/masterDB');
 const groupController = require('../spawn/group');
 const menuUpdateController = require('../menu/menuUpdate');
 const DCSLuaCommands = require('../player/DCSLuaCommands');
 const baseSpawnFlagsController = require('../action/baseSpawnFlags');
+const unitsStaticsController = require('../../controllers/serverToDbSync/unitsStatics');
+const resetCampaignController = require('../action/resetCampaign');
 
 var unitsInProxLogiTowers = {};
 var unitsInProxBases = {};
@@ -15,12 +18,17 @@ var unitsInProxBases = {};
 _.assign(exports, {
 	checkUnitsToBaseForCapture: function (serverName) {
 		var sideArray = {};
+		var promiseBaseSideCount = [];
+		var campaignState = {
+			red: 0,
+			blue: 0
+		};
 		masterDBController.baseActions('read', serverName, {baseType: "MOB"})
 			.then(function (bases) {
 				_.forEach(bases, function (base) {
-					exports.getGroundUnitsInProximity(serverName, base.centerLoc, 3, true)
+					_.set(campaignState, [_.get(constants, ['side', base.side])], _.get(campaignState, [_.get(constants, ['side', base.side])]) + 1);
+					promiseBaseSideCount.push(exports.getGroundUnitsInProximity(serverName, base.centerLoc, .5, true)
 						.then(function (unitsInRange) {
-							var spawnArray = [];
 							sideArray = _.transform(unitsInRange, function (result, value) {
 								(result[value.coalition] || (result[value.coalition] = [])).push(value);
 							}, {});
@@ -64,28 +72,6 @@ _.assign(exports, {
 											console.log('erroring line189: ', err);
 										})
 									;
-									/*
-									masterDBController.unitActions('read', serverName, {name: base.name + ' 55G6 EWR', dead: false})
-										.then(function (commUnit) {
-											if (commUnit === 0) {
-												groupController.spawnBaseEWR(serverName, '55G6 EWR',  base.name, 1);
-											}
-										})
-										.catch(function (err) {
-											console.log('erroring line662: ', err);
-										})
-									;
-									masterDBController.unitActions('read', serverName, {name: base.name + ' 1L13 EWR', dead: false})
-										.then(function (commUnit) {
-											if (commUnit === 0) {
-												groupController.spawnBaseEWR(serverName, '1L13 EWR',  base.name, 1);
-											}
-										})
-										.catch(function (err) {
-											console.log('erroring line662: ', err);
-										})
-									;
-									*/
 								}
 							}
 							if (base.side === 2 && _.get(sideArray, [1], []).length > 0) {
@@ -118,28 +104,6 @@ _.assign(exports, {
 											console.log('erroring line189: ', err);
 										})
 									;
-									/*
-									masterDBController.unitActions('read', serverName, {name: base.name + ' Communications', dead: false})
-										.then(function (aliveComms) {
-											if (aliveComms.length > 0) {
-												groupController.spawnRadioTower(serverName, {}, false, base, 1);
-											}
-										})
-										.catch(function (err) {
-											console.log('erroring line189: ', err);
-										})
-									;
-									masterDBController.unitActions('read', serverName, {name: base.name + ' 1L13 EWR', dead: false})
-										.then(function (commUnit) {
-											if (commUnit === 0) {
-												groupController.spawnBaseEWR(serverName, '1L13 EWR',  base.name, 2);
-											}
-										})
-										.catch(function (err) {
-											console.log('erroring line662: ', err);
-										})
-									;
-									*/
 								}
 							}
 							if (base.side === 0 && (_.get(sideArray, [1], []).length > 0 || _.get(sideArray, [2], []).length > 0)) {
@@ -187,48 +151,47 @@ _.assign(exports, {
 										console.log('erroring line189: ', err);
 									})
 								;
-								/*
-								if (unitSide === 2) {
-									masterDBController.unitActions('read', serverName, {name:  base.name + ' 1L13 EWR', dead: false})
-										.then(function (commUnit) {
-											if (commUnit === 0) {
-												groupController.spawnBaseEWR(serverName, '1L13 EWR',  base.name, unitSide);
-											}
-										})
-										.catch(function (err) {
-											console.log('erroring line662: ', err);
-										})
-									;
-								} else {
-									masterDBController.unitActions('read', serverName, {name:  base.name + ' 55G6 EWR', dead: false})
-										.then(function (commUnit) {
-											if (commUnit === 0) {
-												groupController.spawnBaseEWR(serverName, '55G6 EWR',  base.name, unitSide);
-											}
-										})
-										.catch(function (err) {
-											console.log('erroring line662: ', err);
-										})
-									;
-									masterDBController.unitActions('read', serverName, {name:  base.name + ' 1L13 EWR', dead: false})
-										.then(function (commUnit) {
-											if (commUnit === 0) {
-												groupController.spawnBaseEWR(serverName, '1L13 EWR',  base.name, unitSide);
-											}
-										})
-										.catch(function (err) {
-											console.log('erroring line662: ', err);
-										})
-									;
-								}
-								*/
 							}
 						})
 						.catch(function (err) {
 							console.log('line 64: ', err);
-						})
+						}))
 					;
 				});
+				Promise.all(promiseBaseSideCount)
+					.then(function() {
+						if (!_.isEmpty(bases)) {
+							if(campaignState.red === 0 && !unitsStaticsController.lockUpdates) {
+								var msg = 'Blue has won the campaign, Map will reset in 5 minutes.';
+								console.log('BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON ');
+								unitsStaticsController.lockUpdates = true;
+								// restart in 5 mins
+								resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
+								// resetCampaignController.timeToRestart = new Date().getTime() + (60 * 1000);
+								DCSLuaCommands.sendMesgToAll(
+									serverName,
+									msg,
+									_.get(constants, 'time.fiveMins')
+								);
+							}
+							if(campaignState.blue === 0 && !unitsStaticsController.lockUpdates) {
+								var msg = 'Red has won the campaign, Map will reset in 5 minutes.';
+								console.log('RED WON RED WON RED WON RED WON RED WON RED WON RED WON RED WON RED WON ');
+								unitsStaticsController.lockUpdates = true;
+								resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
+								// resetCampaignController.timeToRestart = new Date().getTime() + (60 * 1000);
+								DCSLuaCommands.sendMesgToAll(
+									serverName,
+									msg,
+									_.get(constants, 'time.fiveMins')
+								);
+							}
+						}
+					})
+					.catch(function (err) {
+						console.log('line 64: ', err);
+					})
+				;
 			})
 			.catch(function (err) {
 				console.log('line 118: ', err);

@@ -5,7 +5,10 @@
 const _ = require('lodash');
 const constants = require('../constants');
 const masterDBController = require('../db/masterDB');
+const proximityController = require('../proxZone/proximity');
 const groupController = require('../spawn/group');
+const resetCampaignController = require('../action/resetCampaign');
+
 
 _.set(exports, 'processFiveSecActions', function (serverName, fullySynced) {
 	var replenThreshold = 1; // percentage under max
@@ -13,6 +16,7 @@ _.set(exports, 'processFiveSecActions', function (serverName, fullySynced) {
 	var replenTimer = _.random(_.get(constants, 'config.replenTimer')/2, _.get(constants, 'config.replenTimer'));
 
 	if (fullySynced) {
+		// resetCampaignController.checkTimeToRestart(serverName); //for testing base capture quickly
 		//set base flags
 		masterDBController.baseActions('read', serverName, {baseType: "MOB"})
 			.then(function (bases) {
@@ -54,5 +58,6 @@ _.set(exports, 'processFiveSecActions', function (serverName, fullySynced) {
 				console.log('line51', err);
 			})
 		;
+		proximityController.checkUnitsToBaseForCapture(serverName);
 	}
 });

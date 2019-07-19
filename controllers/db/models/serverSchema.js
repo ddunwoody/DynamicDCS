@@ -149,6 +149,10 @@ const ServerSchema = new Schema({
 			type: String,
 			required: true,
 			default: 'modern'
+		},
+		fullServerRestartOnCampaignWin: {
+			type: Boolean,
+			default: false
 		}
 	},
 	{

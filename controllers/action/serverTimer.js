@@ -92,20 +92,8 @@ _.set(exports, 'processTimer', function (serverName, serverSecs) {
 		//restart server on next or same map depending on rotation
 		curTime = new Date().getTime();
 		if (curTime > lastSentLoader + _.get(constants, 'time.oneMin')) {
-			masterDBController.serverActions('read', {_id: serverName})
-				.then(function (server) {
-					exports.restartServer(
-						serverName,
-						_.get(server, [0, 'curFilePath']) + '_' +
-						_.get(server, [0, 'curSeason']) + '_' +
-						_.random(1, _.get(server, [0, 'mapCount'])) + '.miz'
-					);
-					lastSentLoader = curTime;
-				})
-				.catch(function (err) {
-					console.log('line73: ', err);
-				})
-			;
+			exports.restartServer(serverName);
+			lastSentLoader = curTime;
 		}
 	} else {
 		if (mesg) {
@@ -119,9 +107,22 @@ _.set(exports, 'resetTimerObj', function () {
 	_.set(exports, 'timerObj', {});
 });
 
-_.set(exports, 'restartServer', function (serverName, newMap) {
-	console.log('Loading Map: ', newMap);
-	DCSLuaCommands.loadMission(serverName, newMap);
+_.set(exports, 'restartServer', function (serverName) {
+	masterDBController.serverActions('read', {_id: serverName})
+		.then(function (server) {
+			var newMap = _.get(server, [0, 'curFilePath']) + '_' +
+				_.get(server, [0, 'curSeason']) + '_' +
+				_.random(1, _.get(server, [0, 'mapCount'])) + '.miz';
+
+			console.log('Loading Map: ', newMap);
+			DCSLuaCommands.loadMission(serverName, newMap);
+		})
+		.catch(function (err) {
+			console.log('line73: ', err);
+		})
+	;
+
+
 });
 
 _.set(exports, 'secondsToHms', function (d) {

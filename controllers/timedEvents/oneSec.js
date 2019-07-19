@@ -3,7 +3,6 @@
  */
 
 const _ = require('lodash');
-const proximityController = require('../proxZone/proximity');
 const eventHitController = require('../events/frontend/S_EVENT_HIT');
 
 _.set(exports, 'processOneSecActions', function (serverName, fullySynced) {
@@ -13,8 +12,6 @@ _.set(exports, 'processOneSecActions', function (serverName, fullySynced) {
 		// proximityController.checkUnitsToBaseForTroops(serverName);
 
 		// proximityController.checkUnitsToLogisticTowers(serverName);
-
-		proximityController.checkUnitsToBaseForCapture(serverName);
 	}
 });
 

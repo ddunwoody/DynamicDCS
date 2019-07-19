@@ -13,6 +13,7 @@ const taskController = require('../action/task');
 const baseSpawnFlagsController = require('../action/baseSpawnFlags');
 const serverTimerController = require('../action/serverTimer');
 const f10MarksController = require('../action/f10Marks');
+const unitsStaticsController = require('../../controllers/serverToDbSync/unitsStatics');
 
 var mesg;
 var masterUnitCount;
@@ -31,6 +32,7 @@ _.set(exports, 'syncType', function (serverName, serverUnitCount) {
 		masterDBController.unitActions('readStd', serverName, {dead: false})
 			.then(function (units) {
 				if (serverUnitCount === 0) { //server is empty
+					unitsStaticsController.lockUpdates = false;
 					taskController.ewrUnitsActivated = {};
 					exports.isServerSynced = false;
 					isServerFresh = true;

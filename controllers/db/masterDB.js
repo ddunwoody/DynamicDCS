@@ -617,8 +617,8 @@ _.assign(exports, {
 			}
 			if(action === 'updateSide') {
 				return new Promise(function(resolve, reject) {
-					Airfield.update(
-						{_id: obj.name},
+					Airfield.updateMany(
+						{_id: new RegExp(obj.name)},
 						{$set: {side: _.get(obj, 'side', 0), replenTime: new Date()}},
 						function(err, airfield) {
 							if (err) { reject(err) }
@@ -1277,6 +1277,9 @@ _.assign(exports, {
 					});
 				});
 			}
+			if(action === 'removeall') {
+				return StaticCrates.remove({});
+			}
 			if(action === 'dropall') {
 				StaticCrates.collection.drop();
 			}
@@ -1526,6 +1529,9 @@ _.assign(exports, {
 						resolve(units);
 					});
 				});
+			}
+			if(action === 'removeall') {
+				return Unit.remove({});
 			}
 			if(action === 'dropall') {
 				Unit.collection.drop();
