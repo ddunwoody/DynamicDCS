@@ -18,9 +18,11 @@ function shutdown(callback){
 _.assign(exports, {
 	checkTimeToRestart: (serverName) => {
 		var nowTime = new Date().getTime();
-		exports.clearCampaignTables(serverName);
-		if(exports.timeToRestart !== 0 && nowTime > exports.timeToRestart) {
-			exports.restartServer(serverName);
+		if(exports.timeToRestart !== 0) {
+			exports.clearCampaignTables(serverName);
+			if(nowTime > exports.timeToRestart) {
+				exports.restartServer(serverName);
+			}
 		}
 	},
 	clearCampaignTables: (serverName) => {
