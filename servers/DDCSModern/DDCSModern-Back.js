@@ -78,7 +78,7 @@ masterDBController.initDB(serverName, masterServer)
 										console.log('line73: ', err);
 									})
 								;
-								console.log('mis: ', missionArray, missionPath);
+								// console.log('mis: ', missionArray, missionPath);
 								serverTimerController.restartServer(serverName);
 								lastSentLoader = curTime;
 							}
