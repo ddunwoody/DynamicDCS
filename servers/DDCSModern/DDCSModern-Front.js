@@ -76,7 +76,7 @@ masterDBController.initDB(serverName, masterServer)
 						masterDBController.sessionsActions('readLatest', serverName, {})
 							.then(function (latestSession) {
 								// console.log('sn: ', serverEpoc, startAbs, curAbs, latestSession.name);
-								if (sessionName !== latestSession.name || _.get(exports, ['curAbsTime'], 0) > curAbs) {
+								if (sessionName !== _.get(latestSession,'name', '') || _.get(exports, ['curAbsTime'], 0) > curAbs) {
 									minutesPlayedController.resetMinutesPlayed(serverName);
 									masterDBController.campaignsActions('readLatest', serverName, {})
 										.then(function (campaign) {
