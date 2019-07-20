@@ -27,7 +27,7 @@ _.assign(exports, {
 			.then(function (bases) {
 				_.forEach(bases, function (base) {
 					_.set(campaignState, [_.get(constants, ['side', base.side])], _.get(campaignState, [_.get(constants, ['side', base.side])]) + 1);
-					promiseBaseSideCount.push(exports.getGroundUnitsInProximity(serverName, base.centerLoc, .5, true)
+					promiseBaseSideCount.push(exports.getGroundUnitsInProximity(serverName, base.centerLoc, 3, true)
 						.then(function (unitsInRange) {
 							sideArray = _.transform(unitsInRange, function (result, value) {
 								(result[value.coalition] || (result[value.coalition] = [])).push(value);
