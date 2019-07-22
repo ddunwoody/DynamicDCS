@@ -300,6 +300,7 @@
 					var overlayRadius = _.get(gSrv, ['overlayCoords', baseName, 'capturePoint']) ? 7500 : 15000;
 					var sideColor = { "1": '#ff5555', "2": '#00aaff' };
 					var curSideColor = (_.get(base, 'baseType') === 'MOB') ? sideColor[side]: null;
+					console.log('base: ', base.name, base.baseType, curSideColor);
 
 
 					_.set(gSrv, ['circleOverlay', baseName], new gSrv.googleMaps.Circle({
