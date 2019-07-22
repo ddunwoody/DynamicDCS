@@ -274,7 +274,7 @@
 			//console.log('addoverlay gmap: ',base,side);
 			var baseName = _.get(base, 'name');
 			if (  gSrv.overlayCoords[baseName] && gSrv.googleMaps ) {
-				if ( typeof gSrv.overlayCoords[bbaseName].lat1 !== "undefined" ) {
+				if ( typeof gSrv.overlayCoords[baseName].lat1 !== "undefined" ) {
 					var imageBounds = new gSrv.googleMaps.LatLngBounds(
 						new gSrv.googleMaps.LatLng(gSrv.overlayCoords[baseName].lat1,
 							gSrv.overlayCoords[baseName].lng1),
