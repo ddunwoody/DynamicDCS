@@ -298,10 +298,12 @@
 					var center =  {lat: gSrv.overlayCoords[base].latc, lng: gSrv.overlayCoords[base].lngc};
 					var overlayRadius = _.get(gSrv, ['overlayCoords', base, 'capturePoint']) ? 7500 : 15000;
 					var sideColor = { "1": '#ff5555', "2": '#00aaff' };
+					var curSideColor = (_.includes(base, '_MOB')) ? sideColor[side]: null;
+
 
 					_.set(gSrv, ['circleOverlay', base], new gSrv.googleMaps.Circle({
-						strokeColor: sideColor[side],
-						fillColor: sideColor[side],
+						strokeColor: curSideColor,
+						fillColor: curSideColor,
 						strokeOpacity: 0.2,
 						strokeWeight: 0,
 						map: gSrv.currentMap,
