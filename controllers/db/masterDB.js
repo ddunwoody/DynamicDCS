@@ -591,7 +591,7 @@ _.assign(exports, {
 									function(err, dbairfields) {
 										if (err) { reject(err) }
 										tAirfields = _.transform(dbairfields, function (result, value) {
-											result.push({name: value.name, side: value.side})
+											result.push({name: value.name, baseType: value.baseType, side: value.side})
 										}, []);
 										resolve(tAirfields);
 									}
@@ -607,7 +607,7 @@ _.assign(exports, {
 							function(err, dbairfields) {
 								if (err) { reject(err) }
 								tAirfields = _.transform(dbairfields, function (result, value) {
-									result.push({name: value.name, side: value.side})
+									result.push({name: value.name, baseType: value.baseType, side: value.side})
 								}, []);
 								resolve(tAirfields);
 							}

@@ -163,7 +163,7 @@
 			gSrv.clearBaseOverlay();
 			gSrv.clearCircleOverlay();
 			_.forEach(basesArray, function (base) {
-				gSrv.addOverlay(base.name, base.side);
+				gSrv.addOverlay(base, base.side);
 			});
 		});
 		_.set(gSrv, 'processUnitsStatics', function (unitArray) {
@@ -272,21 +272,23 @@
 		});
 		_.set(gSrv, 'addOverlay', function (base, side) {
 			//console.log('addoverlay gmap: ',base,side);
-			if (  gSrv.overlayCoords[base] && gSrv.googleMaps ) {
-				if ( typeof gSrv.overlayCoords[base].lat1 !== "undefined" ) {
+			var baseName = _.get(base, 'name');
+			if (  gSrv.overlayCoords[baseName] && gSrv.googleMaps ) {
+				if ( typeof gSrv.overlayCoords[baseName].lat1 !== "undefined" && side !== 0 ) {
 					var imageBounds = new gSrv.googleMaps.LatLngBounds(
-						new gSrv.googleMaps.LatLng(gSrv.overlayCoords[base].lat1,
-							gSrv.overlayCoords[base].lng1),
-						new gSrv.googleMaps.LatLng(gSrv.overlayCoords[base].lat2,
-							gSrv.overlayCoords[base].lng2)
+						new gSrv.googleMaps.LatLng(gSrv.overlayCoords[baseName].lat1,
+							gSrv.overlayCoords[baseName].lng1),
+						new gSrv.googleMaps.LatLng(gSrv.overlayCoords[baseName].lat2,
+							gSrv.overlayCoords[baseName].lng2)
 					);
-					_.set(gSrv, ['baseOverlay', base],
+
+					_.set(gSrv, ['baseOverlay', baseName],
 						new gSrv.googleMaps.GroundOverlay('imgs/mapOverlays/' +
-							base + '_' + side + '.png', imageBounds));
-					_.get(gSrv, ['baseOverlay', base]).setMap(gSrv.currentMap);
+							baseName + '_' + side + '.png', imageBounds));
+					_.get(gSrv, ['baseOverlay', baseName]).setMap(gSrv.currentMap);
 
 					gSrv.googleMaps.event.addListener(
-						_.get(gSrv, ['baseOverlay', base]),
+						_.get(gSrv, ['baseOverlay', baseName]),
 						'rightclick',
 						function(e){
 							gSrv.displayCoordinates(e.latLng);
@@ -294,14 +296,17 @@
 					);
 				}
 
-				if ( typeof gSrv.overlayCoords[base].latc !== "undefined" ) {
-					var center =  {lat: gSrv.overlayCoords[base].latc, lng: gSrv.overlayCoords[base].lngc};
-					var overlayRadius = _.get(gSrv, ['overlayCoords', base, 'capturePoint']) ? 7500 : 15000;
+				if ( typeof gSrv.overlayCoords[baseName].latc !== "undefined" ) {
+					var center =  {lat: gSrv.overlayCoords[baseName].latc, lng: gSrv.overlayCoords[baseName].lngc};
+					var overlayRadius = _.get(gSrv, ['overlayCoords', baseName, 'capturePoint']) ? 7500 : 15000;
 					var sideColor = { "1": '#ff5555', "2": '#00aaff' };
+					var curSideColor = (_.get(base, 'baseType') === 'MOB') ? sideColor[side]: null;
+					console.log('base: ', base, curSideColor);
 
-					_.set(gSrv, ['circleOverlay', base], new gSrv.googleMaps.Circle({
-						strokeColor: sideColor[side],
-						fillColor: sideColor[side],
+
+					_.set(gSrv, ['circleOverlay', baseName], new gSrv.googleMaps.Circle({
+						strokeColor: curSideColor,
+						fillColor: curSideColor,
 						strokeOpacity: 0.2,
 						strokeWeight: 0,
 						map: gSrv.currentMap,
@@ -310,7 +315,7 @@
 					}));
 
 					gSrv.googleMaps.event.addListener(
-						_.get(gSrv, ['circleOverlay', base]),
+						_.get(gSrv, ['circleOverlay', baseName]),
 						'rightclick',
 						function(e){
 							gSrv.displayCoordinates(e.latLng);
@@ -319,6 +324,7 @@
 				}
 			}
 		});
+		/*
 		_.set(gSrv, 'updateOverlay', function (base, side) {
 			if(!_.includes(base, '_MOB') || !_.includes(base, '_FOB')){ //until farps have a img overlay, bypass them...
 				_.get(gSrv, ['baseOverlay', base]).setMap(null);
@@ -329,6 +335,7 @@
 
 			gSrv.addOverlay(base, side);
 		});
+		 */
 		_.set(gSrv, 'init', function (serverName, theaterObj) {
 			_.set(userAccountService, 'localAccount.headerInfo', 'Right Click Map For Point Info');
 			gSrv.setupGmapObj(theaterObj);
