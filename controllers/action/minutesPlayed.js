@@ -85,7 +85,7 @@ _.assign(exports, {
 	recordFiveMinutesPlayed: (serverName) => {
 		masterDBController.sessionsActions('readLatest', serverName, {})
 			.then(function (latestSession) {
-				var unitsNewThan = new Date().getTime() - _.get(constants, ['time', 'fiveMins'], 0);
+				var unitsNewThan = new Date().getTime() - _.get(constants, ['time', 'fourMins'], 0);
 				// update only people who have played in the last 5 minutes
 				masterDBController.srvPlayerActions('read', serverName, {
 					sessionName: latestSession.name,
