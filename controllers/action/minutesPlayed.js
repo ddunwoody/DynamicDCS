@@ -4,6 +4,7 @@
 
 const	_ = require('lodash');
 const masterDBController = require('../db/masterDB');
+const constants = require('../constants');
 
 _.assign(exports, {
 	checkCurrentPlayerBalance: (serverName) => {
