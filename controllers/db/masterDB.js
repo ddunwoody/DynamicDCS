@@ -1145,6 +1145,7 @@ _.assign(exports, {
 							if (err) {reject(err)}
 							if (serverObj.length > 0) {
 								let curPlayer = _.first(serverObj);
+								console.log('Name: ', curPlayer.name, _.get(curPlayer, [sessionMinutesVar], 0) + _.get(obj, 'minutesPlayed', 0));
 								SrvPlayer.update(
 									{ _id: obj._id },
 									{ $set: { [sessionMinutesVar]: _.get(curPlayer, [sessionMinutesVar], 0) + _.get(obj, 'minutesPlayed', 0) } },

@@ -91,7 +91,7 @@ _.assign(exports, {
 					updatedAt: {$gt: new Date().getTime() - _.get(constants, ['time', 'fiveMins'], 0)}
 				})
 					.then(function (playerArray) {
-						console.log('playersInFiveMinutes: ', new Date().getTime() - _.get(constants, ['time', 'fiveMins'], 0), playerArray);
+						console.log('playersInFiveMinutes: ', new Date().getTime() - _.get(constants, ['time', 'fiveMins'], 0), playerArray.length);
 						_.forEach(playerArray, function (player) {
 							masterDBController.srvPlayerActions('addMinutesPlayed', serverName, {
 								_id: player._id,
