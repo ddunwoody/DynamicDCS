@@ -8,6 +8,7 @@ const masterDBController = require('../db/masterDB');
 const neutralCCController = require('../action/neutralCC');
 const DCSLuaCommands = require('../player/DCSLuaCommands');
 const zoneController = require('../proxZone/zone');
+const groupController = require('../spawn/group');
 
 var openSAM = 0;
 
@@ -2125,34 +2126,35 @@ _.set(exports, 'spawnNewMapGrps', function ( serverName ) {
 	var totalUnitsSpawned = 0;
 	var curServer = _.get(constants, ['config']);
 	var totalUnitNum;
-	var defBaseSides = _.get(curServer, ['defBaseSides', _.get(curServer, 'theater')]);
-	_.forEach(defBaseSides, function (extSide, extName) {
-		var spawnArray = [];
-		var curReplenThreshold;
-		exports.spawnSupportBaseGrp(serverName, extName, extSide, true);
-		totalUnitNum = 0;
-		while (spawnArray.length + totalUnitNum < curServer.replenThresholdBase) { //UNCOMMENT THESE
-			totalUnitNum += exports.spawnBaseReinforcementGroup(serverName, extSide, extName, true, true);
-			// console.log('TN: ', totalUnitNum, spawnArray.length, totalUnitNum, '<', curReplenThreshold, spawnArray.length + totalUnitNum < curReplenThreshold);
-		}
-
-		exports.spawnSAMNet(serverName, extSide, extName, true);
-		totalUnitNum += 3;
-
-		exports.spawnGroup(serverName, spawnArray, extName, extSide);
-		exports.spawnLogisticCmdCenter(serverName, {}, true, _.find(_.get(constants, 'bases'), {name: extName}), extSide);
-		exports.spawnRadioTower(serverName, {}, true, _.find(_.get(constants, 'bases'), {name: extName}), extSide);
-		/*
-		if (extSide === 2) {
-			exports.spawnBaseEWR(serverName, '1L13 EWR', extName, extSide);
-		} else {
-			exports.spawnBaseEWR(serverName, '55G6 EWR', extName, extSide);
-			exports.spawnBaseEWR(serverName, '1L13 EWR', extName, extSide);
-		}
-		*/
-		totalUnitsSpawned += spawnArray.length + totalUnitNum + 1;
-	});
-	return totalUnitsSpawned
+	return masterDBController.baseActions('read', serverName, {name: {$not: /#/}})
+		.then(function (bases) {
+			_.forEach(bases, function (base) {
+				if(!_.includes(_.get(base, 'name'), 'Carrier')){
+					var spawnArray = [];
+					var baseName = _.get(base, 'name');
+					var baseStartSide = _.get(base, 'defaultStartSide', 0);
+					totalUnitNum = 0;
+					groupController.spawnLogisticCmdCenter(serverName, {}, false, base, baseStartSide);
+					exports.spawnSupportBaseGrp(serverName, baseName, baseStartSide, true);
+					if(_.get(base, 'baseType') === 'MOB') {
+						while (spawnArray.length + totalUnitNum < curServer.replenThresholdBase) { //UNCOMMENT THESE
+							totalUnitNum += exports.spawnBaseReinforcementGroup(serverName, baseStartSide, baseName, true, true);
+						}
+						exports.spawnSAMNet(serverName, baseStartSide, baseName, true);
+						totalUnitNum += 3;
+						exports.spawnRadioTower(serverName, {}, true, _.find(_.get(constants, 'bases'), {name: baseName}), baseStartSide);
+					}
+					exports.spawnGroup(serverName, spawnArray, baseName, baseStartSide);
+					exports.spawnLogisticCmdCenter(serverName, {}, true, _.find(_.get(constants, 'bases'), {name: baseName}), baseStartSide);
+					totalUnitsSpawned += spawnArray.length + totalUnitNum + 1;
+					return totalUnitsSpawned
+				}
+			});
+		})
+		.catch(function (err) {
+			console.log('erroring line2181: ', err);
+		})
+	;
 });
 
 _.set(exports, 'spawnLogisticCmdCenter', function (serverName, staticObj, init, baseObj, side) {
