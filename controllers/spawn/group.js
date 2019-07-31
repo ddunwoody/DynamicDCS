@@ -9,6 +9,7 @@ const neutralCCController = require('../action/neutralCC');
 const DCSLuaCommands = require('../player/DCSLuaCommands');
 const zoneController = require('../proxZone/zone');
 const groupController = require('../spawn/group');
+const taskController = require('../action/task');
 
 var openSAM = 0;
 
@@ -131,6 +132,88 @@ _.set(exports, 'turnOnEWRAuto', function (groupObj) {
 				'},' +
 			'},' +
 		'},';
+});
+
+_.set(exports, 'convoyRouteTemplate', function (routes) {
+	var buildTemplate = {
+		route: {
+			points: []
+		}
+	};
+	var cNum = 1;
+	_.forEach(_.get(routes, 'routeLocs'), (route) => {
+		buildTemplate.route.points.push(
+			{
+				type: 'Turning Point',
+				action: _.get(route, 'action'),
+				x: 'coord.LLtoLO(' + _.get(route, ['lonLat', 1]) + ', ' + _.get(route, ['lonLat', 0]) + ').x',
+				y: 'coord.LLtoLO(' + _.get(route, ['lonLat', 1]) + ', ' + _.get(route, ['lonLat', 0]) + ').z',
+				speed: 20,
+				name: 'route' + cNum
+			}
+		);
+		cNum = cNum + 1;
+	});
+
+
+	/*
+	var buildTemplate = '' +
+		"route = {" +
+			"points = {";
+		/*
+				'[1] = {' +
+					'["type"] = "Turning Point",' +
+					'["ETA"] = 0,' +
+					'["alt_type"] = "BARO",' +
+					'["formation_template"] = "",' +
+					'["name"] = "dontdisperse",' +
+					'["ETA_locked"] = true,' +
+					'["speed"] = 0,' +
+					'["action"] = "Off Road",' +
+					'["task"] = {' +
+						'["id"] = "ComboTask",' +
+						'["params"] = {' +
+							'["tasks"] = {' +
+								'[1] = {' +
+									'["enabled"] = true,' +
+									'["auto"] = false,' +
+									'["id"] = "WrappedAction",' +
+									'["number"] = 1,' +
+									'["params"] = {' +
+										'["action"] = {' +
+											'["id"] = "Option",' +
+											'["params"] = {' +
+												'["name"] = 8,' +
+											'},' +
+										'},' +
+									'},' +
+								'},' +
+							'},' +
+						'},' +
+					'},' +
+					'["speed_locked"] = true,' +
+				'},';
+
+		var cNum = 1;
+	_.forEach(_.get(routes, 'routeLocs'), (route) => {
+		buildTemplate +=
+				'["' + cNum + '"] = {' +
+					'["type"] = "Turning Point",' +
+					'["action"] = "' + _.get(route, 'action') + '",' +
+					'["x"] = coord.LLtoLO(' + _.get(route, ['lonLat', 1]) + ", " + _.get(route, ['lonLat', 0]) + ').x, ' +
+					'["y"] = coord.LLtoLO(' + _.get(route, ['lonLat', 1]) + ", " + _.get(route, ['lonLat', 0]) + ").z, " +
+					'["speed"] = 20' +
+					'["name"] = "route' + cNum + '"' +
+				'},';
+				cNum = cNum + 1;
+	});
+
+	buildTemplate +=
+			')' +
+		'}';
+	*/
+	console.log('BT: ', buildTemplate.route.points);
+	return buildTemplate;
 });
 
 _.set(exports, 'turnOffDisperseUnderFire', function () {
@@ -1561,6 +1644,145 @@ _.set(exports, 'spawnLayer2Reinforcements', function (serverName, catType, rndAm
 	return _.get(_.compact(groupedL2Units), 'length', 0);
 });
 
+_.set(exports, 'spawnConvoy', function (serverName, groupName, convoySide, baseTemplate, mesg) {
+
+	var convoyMakup = {
+		1: [{
+				name: groupName + 'Leclerc|1|',
+				type: 'Leclerc',
+				country: 'AGGRESSORS',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			},
+			{
+				name: groupName + 'Leclerc|2|',
+				type: 'Leclerc',
+				country: 'AGGRESSORS',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			},
+			{
+				name: groupName + 'BMP-3|1|',
+				type: 'BMP-3',
+				country: 'AGGRESSORS',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			},
+			{
+				name: groupName + '2S6 Tunguska|1|',
+				type: '2S6 Tunguska',
+				country: 'AGGRESSORS',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			},
+			{
+				name: groupName + '2S6 Tunguska|2|',
+				type: '2S6 Tunguska',
+				country: 'AGGRESSORS',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			}
+		],
+		2: [{
+				name: groupName + 'M-1 Abrams|1|',
+				type: 'M-1 Abrams',
+				country: 'USA',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			},
+			{
+				name: groupName + 'M-1 Abrams|2|',
+				type: 'M-1 Abrams',
+				country: 'USA',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			},
+			{
+				name: groupName + 'M1128 Stryker MGS|1|',
+				type: 'M1128 Stryker MGS',
+				country: 'USA',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			},
+			{
+				name: groupName + 'M6 Linebacker|1|',
+				type: 'M6 Linebacker',
+				country: 'USA',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			},
+			{
+				name: groupName + 'M6 Linebacker|2|',
+				type: 'M6 Linebacker',
+				country: 'USA',
+				speed: '55',
+				hidden: false,
+				playerCanDrive: false
+			}
+		]
+	};
+
+	var curConvoyMakeup = _.get(convoyMakup, [convoySide]);
+	var groupArray = [];
+	var curGrpObj = {};
+	var curGroupSpawn;
+	var defaultStartLonLat = _.get(_.first(_.get(baseTemplate, 'route')), 'lonLat');
+
+	_.set(curGrpObj, 'groupName', groupName);
+	_.set(curGrpObj, 'country', _.get(_.first(curConvoyMakeup), 'country'));
+	_.set(curGrpObj, 'routeLocs', _.get(baseTemplate, 'route'));
+	_.set(curGrpObj, 'category', 'GROUND');
+
+	// curGroupSpawn = exports.grndUnitGroup( curGrpObj, 'Ground Nothing', exports.convoyRouteTemplate(curGrpObj));
+	curGroupSpawn = exports.grndUnitGroup(curGrpObj);
+	// console.log('CGS: ', curGroupSpawn);
+	var unitNum = 1;
+	_.forEach(curConvoyMakeup, (convUnit) => {
+		var curSpwnUnit = _.cloneDeep(convUnit);
+		_.set(curSpwnUnit, 'lonLatLoc', defaultStartLonLat);
+		_.set(curSpwnUnit, 'name', groupName + unitNum + '|');
+		_.set(curSpwnUnit, 'playerCanDrive', false);
+		_.set(curSpwnUnit, 'hidden', false);
+		groupArray += exports.grndUnitTemplate(curSpwnUnit) + ',';
+		unitNum = unitNum + 1;
+	});
+	curGroupSpawn = _.replace(curGroupSpawn, "#UNITS", groupArray);
+	// console.log('CGS: ', curGroupSpawn);
+	var curCMD = exports.spawnGrp(curGroupSpawn, _.get(curGrpObj, 'country'), _.get(curGrpObj, 'category'));
+	console.log('CCD: ', curCMD);
+	var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
+	var actionObj = {actionObj: sendClient, queName: 'clientArray'};
+	masterDBController.cmdQueActions('save', serverName, actionObj)
+		.then(function () {
+			// save in que to move convoy in 1 min
+			taskController.setMissionTask(serverName, groupName, JSON.stringify(exports.convoyRouteTemplate(curGrpObj)))
+				.then(function() {
+					DCSLuaCommands.sendMesgToCoalition(
+						convoySide,
+						serverName,
+						mesg,
+						20
+					);
+				})
+				.catch(function (err) {
+					console.log('erroring line1778: ', err);
+				})
+			;
+		})
+		.catch(function (err) {
+			console.log('erroring line1783: ', err);
+		})
+	;
+});
 
 _.set(exports, 'spawnDefenseChopper', function (serverName, playerUnitObj, unitObj) {
 	var curTkrName;

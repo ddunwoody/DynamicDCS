@@ -84,8 +84,8 @@ const srvPlayerSchema = new Schema({
 			default: false
 		},
 		gciAllowed: {
-            type: Boolean,
-            default: false
+    	type: Boolean,
+      default: false
 		},
 		isGameMaster: {
 			type: Boolean,

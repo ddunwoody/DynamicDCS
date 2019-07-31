@@ -687,8 +687,9 @@ _.assign(exports, {
 		if (curDBConn) {
 			const CmdQue = curDBConn.model(serverName+'_cmdque', _.get(exports, 'dbObj.cmdQueSchema'));
 			if (action === 'grabNextQue') {
+				var nowTime = new Date().getTime();
 				return new Promise(function(resolve, reject) {
-					CmdQue.findOneAndRemove({queName: obj.queName}, function (err,clientQue){
+					CmdQue.findOneAndRemove({queName: obj.queName, timeToExecute: {$lt: nowTime}}, function (err,clientQue){
 						if(err) {
 							reject(err);
 						}

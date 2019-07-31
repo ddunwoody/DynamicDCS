@@ -6,17 +6,22 @@ const	_ = require('lodash');
 const masterDBController = require('../db/masterDB');
 const constants = require('../constants');
 
+//move to db eventually
+var ratioToSendConvoys = 2; //:1
+
 _.assign(exports, {
 	checkCurrentPlayerBalance: (serverName) => {
-		masterDBController.sessionsActions('readLatest', serverName, {})
-			.then(function (latestSession) {
-				let sideState = 'balance';
-				if (latestSession.name) {
-					if((latestSession.totalMinutesPlayed_blue/latestSession.totalMinutesPlayed_red) < 2) {
-						sideState = blueStack
+		// set to 2:1 or worse
+		return masterDBController.campaignsActions('readLatest', serverName, {})
+			.then(function (latestCampaign) {
+				console.log('STACK: Blue:', latestCampaign.totalMinutesPlayed_blue, ' Red:', latestCampaign.totalMinutesPlayed_red, latestCampaign);
+				let sideState = 0;
+				if (_.get(latestCampaign, 'name')) {
+					if((latestCampaign.totalMinutesPlayed_blue/latestCampaign.totalMinutesPlayed_red) >= ratioToSendConvoys) {
+						sideState = 1;
 					}
-					if((latestSession.totalMinutesPlayed_red/latestSession.totalMinutesPlayed_blue) < 2) {
-						sideState = redStack
+					if((latestCampaign.totalMinutesPlayed_red/latestCampaign.totalMinutesPlayed_blue) >= ratioToSendConvoys) {
+						sideState = 2;
 					}
 				}
 				return sideState;

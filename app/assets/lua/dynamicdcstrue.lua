@@ -413,7 +413,33 @@ do
 				end
 			end
 			if request.action == "ADDTASK" then
-				--env.info('ADD TASK')
+				env.info('ADD TASK')
+				tprint(request, 1)
+				if request.taskType == 'Mission' then
+					local taskGroup = Group.getByName(request.groupName)
+					if taskGroup ~= nil then
+						tprint(taskGroup:getUnits(), 1)
+						local _controller = taskGroup:getController()
+						local routeTable = JSON:decode(request.route)
+						for nIndex = 1, #routeTable.route.points do
+							routeTable.route.points[nIndex].x = pcallCommand(routeTable.route.points[nIndex].x)
+							routeTable.route.points[nIndex].y = pcallCommand(routeTable.route.points[nIndex].y)
+						end
+						tprint(routeTable, 1)
+						local _Mission = {
+							id = 'Mission',
+							params = routeTable
+						}
+						tprint(_Mission, 1)
+						_controller:pushTask(_Mission)
+						local hasTask = _controller:hasTask()
+						if hasTask ~= nil then
+							env.info(request.groupName..' HAS A TASK ')
+						else
+							env.info(request.groupName..' NO TASK')
+						end
+					end
+				end
 				if request.taskType == 'EWR' then
 					local taskUnit = Unit.getByName(request.unitName)
 					if taskUnit ~= nil then
@@ -566,7 +592,7 @@ do
 				if type(request.cmd) == 'table' then
 					for rIndex = 1, #request.cmd do
 						--env.info('CMD: '..request.cmd[rIndex])
-						pcallCommand(request.cmd[rIndex], request.reqID)
+						pcallCommand(request.cmd[rIndex])
 					end
 				end
 			end
@@ -665,20 +691,11 @@ do
 	end
 
 	--Protected call to command execute
-	function pcallCommand(s, respId)
+	function pcallCommand(s)
 		local success, resp = pcall(commandExecute, s)
 		if success then
 			if resp ~= nil then
-				--local curUpdate;
-				--curUpdate = {
-				--	action = 'CMDRESPONSE',
-				--	data = {
-				--		respId = respId,
-				--		cmd = s,
-				--		response = resp
-				--	}
-				--}
-				--table.insert(updateQue.que, curUpdate)
+				return resp
 			end
 		else
 			log("Error: " .. resp)

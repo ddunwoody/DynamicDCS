@@ -12,12 +12,18 @@ const userLivesController = require('../action/userLives');
 const weaponComplianceController = require('../action/weaponCompliance');
 const neutralCCController = require('../action/neutralCC');
 const resetCampaignController = require('../action/resetCampaign');
+const aiConvoysController = require('../action/aiConvoys');
 
 var AIMaxIdleTime = (5 * 60 * 1000); // 5 mins
 var maxCrateLife = (3 * 60 * 60 * 1000); // 3 hrs
 
 _.set(exports, 'processThirtySecActions', function (serverName, fullySynced) {
 	if (fullySynced) {
+		aiConvoysController.checkForServerImbalance(serverName)
+			.catch(function (err) {
+				console.log('err line16: ', err);
+			})
+		;
 		masterDBController.unitActions('removeAllDead', serverName, {})
 			.catch(function (err) {
 				console.log('err line12: ', err);

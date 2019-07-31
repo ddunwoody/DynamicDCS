@@ -72,7 +72,8 @@ _.set(exports, 'syncType', function (serverName, serverUnitCount) {
 										var curGrpName = _.get(unit, 'groupName');
 										if (
 											(_.get(unit, 'category') === 'GROUND') &&
-											!_.get(unit, 'isTroop', false)
+											!_.get(unit, 'isTroop', false) &&
+											!_.get(unit, 'isAI', false)
 										) {
 											_.set(remappedunits, [curGrpName], _.get(remappedunits, [curGrpName], []));
 											remappedunits[curGrpName].push(unit);

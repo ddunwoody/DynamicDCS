@@ -14,6 +14,11 @@ const CmdQueSchema = new Schema({
 		queName: {
 			type: String,
 			required: true
+		},
+		timeToExecute: {
+			type: Number,
+			default: 0,
+			index: true
 		}
 	},
 	{

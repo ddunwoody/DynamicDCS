@@ -16,7 +16,7 @@ const serverTimerController = require('../../controllers/action/serverTimer');
 
 //config
 var commsCounter = 0;
-var masterServer = '192.168.44.60';
+var masterServer = '127.0.0.1';
 var serverName = 'DDCSModern';
 var lastSentLoader = new Date().getTime();
 

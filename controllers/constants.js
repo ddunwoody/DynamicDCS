@@ -116,6 +116,7 @@ _.assign(exports, {
 		2: 'USA'
 	},
 	enemyCountry: {
+		0: 0,
 		1: 2,
 		2: 1
 	},

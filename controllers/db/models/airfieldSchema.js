@@ -89,7 +89,8 @@ const AirfieldSchema = new mongoose.Schema({
 		type: Number,
 		min: 0,
 		max: 2,
-		required: true
+		required: true,
+		default: 0
 	}
 },
 	{
