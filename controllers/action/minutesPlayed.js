@@ -14,14 +14,18 @@ _.assign(exports, {
 		// set to 2:1 or worse
 		return masterDBController.campaignsActions('readLatest', serverName, {})
 			.then(function (latestCampaign) {
-				console.log('STACK: Blue:', latestCampaign.totalMinutesPlayed_blue, ' Red:', latestCampaign.totalMinutesPlayed_red, latestCampaign);
 				let sideState = 0;
-				if (_.get(latestCampaign, 'name')) {
-					if((latestCampaign.totalMinutesPlayed_blue/latestCampaign.totalMinutesPlayed_red) >= ratioToSendConvoys) {
-						sideState = 1;
-					}
-					if((latestCampaign.totalMinutesPlayed_red/latestCampaign.totalMinutesPlayed_blue) >= ratioToSendConvoys) {
-						sideState = 2;
+				let totalCampaignTime = new Date(_.get(latestCampaign, 'updatedAt')).getTime() - new Date(_.get(latestCampaign, 'createdAt')).getTime();
+				// console.log('tct: ', totalCampaignTime);
+				if (totalCampaignTime > _.get(constants, 'time.oneHour')) {
+					console.log('STACK: Blue:', latestCampaign.totalMinutesPlayed_blue, ' Red:', latestCampaign.totalMinutesPlayed_red);
+					if (_.get(latestCampaign, 'name')) {
+						if((latestCampaign.totalMinutesPlayed_blue/latestCampaign.totalMinutesPlayed_red) >= ratioToSendConvoys) {
+							sideState = 1;
+						}
+						if((latestCampaign.totalMinutesPlayed_red/latestCampaign.totalMinutesPlayed_blue) >= ratioToSendConvoys) {
+							sideState = 2;
+						}
 					}
 				}
 				return sideState;
@@ -97,9 +101,9 @@ _.assign(exports, {
 					updatedAt: {$gt: unitsNewThan}
 				})
 					.then(function (playerArray) {
-						console.log('playersInFiveMinutes: ', playerArray.length);
+						// console.log('playersInFiveMinutes: ', playerArray.length);
 						_.forEach(playerArray, function (player) {
-							console.log('isPlayerTimeGreater: ', player.name, new Date(player.updatedAt).getTime() > unitsNewThan, new Date(player.updatedAt).getTime() - unitsNewThan);
+							// console.log('isPlayerTimeGreater: ', player.name, new Date(player.updatedAt).getTime() > unitsNewThan, new Date(player.updatedAt).getTime() - unitsNewThan);
 							masterDBController.srvPlayerActions('addMinutesPlayed', serverName, {
 								_id: player._id,
 								minutesPlayed: 5,

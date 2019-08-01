@@ -32,6 +32,7 @@ const processTimedFiveSecs = require('../../controllers/timedEvents/fiveSecs');
 const processTimedThirtySecs = require('../../controllers/timedEvents/thirtySecs');
 const processTimedFiveMinutes = require('../../controllers/timedEvents/fiveMinutes');
 const processTimedTenMinutes = require('../../controllers/timedEvents/tenMinutes');
+const processTimedOneHour = require('../../controllers/timedEvents/oneHour');
 
 //config
 var masterServer = '127.0.0.1';
@@ -252,6 +253,12 @@ masterDBController.initDB(serverName, masterServer)
 						processTimedTenMinutes.processTenMinuteActions(serverName, sychrontronController.isServerSynced);
 					}
 				}, _.get(constants, 'time.tenMinutes'));
+
+				setInterval(function () {
+					if (!_.get(exports, ['DCSSocket', 'connOpen'], true)) {
+						processTimedOneHour.processOneHourActions(serverName, sychrontronController.isServerSynced);
+					}
+				}, _.get(constants, 'time.oneHour'));
 
 				setInterval(function () {
 					if (constants.bases) {

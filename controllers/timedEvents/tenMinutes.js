@@ -5,18 +5,10 @@
 const _ = require('lodash');
 const userLivesController = require('../action/userLives');
 const repairController = require('../menu/repair');
-const aiConvoysController = require('../action/aiConvoys');
 
 _.set(exports, 'processTenMinuteActions', function (serverName, fullySynced) {
 	if (fullySynced) {
 		userLivesController.updateServerLifePoints(serverName);
 		repairController.repairBaseSAMRadars(serverName);
-		/*
-		aiConvoysController.checkForServerImbalance(serverName)
-			.catch(function (err) {
-				console.log('err line16: ', err);
-			})
-		;
-		 */
 	}
 });

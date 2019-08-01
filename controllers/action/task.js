@@ -31,7 +31,7 @@ _.set(exports, 'setEWRTask', function (serverName, unitName) {
 });
 _.set(exports, 'setMissionTask', function (serverName, groupName, route) {
 	nowTime = new Date().getTime();
-	console.log('NT: ', delayTask, nowTime);
+	// console.log('NT: ', delayTask, nowTime);
 	var sendClient = {
 		action: 'ADDTASK',
 		taskType: 'Mission',

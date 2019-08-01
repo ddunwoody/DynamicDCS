@@ -154,65 +154,7 @@ _.set(exports, 'convoyRouteTemplate', function (routes) {
 		);
 		cNum = cNum + 1;
 	});
-
-
-	/*
-	var buildTemplate = '' +
-		"route = {" +
-			"points = {";
-		/*
-				'[1] = {' +
-					'["type"] = "Turning Point",' +
-					'["ETA"] = 0,' +
-					'["alt_type"] = "BARO",' +
-					'["formation_template"] = "",' +
-					'["name"] = "dontdisperse",' +
-					'["ETA_locked"] = true,' +
-					'["speed"] = 0,' +
-					'["action"] = "Off Road",' +
-					'["task"] = {' +
-						'["id"] = "ComboTask",' +
-						'["params"] = {' +
-							'["tasks"] = {' +
-								'[1] = {' +
-									'["enabled"] = true,' +
-									'["auto"] = false,' +
-									'["id"] = "WrappedAction",' +
-									'["number"] = 1,' +
-									'["params"] = {' +
-										'["action"] = {' +
-											'["id"] = "Option",' +
-											'["params"] = {' +
-												'["name"] = 8,' +
-											'},' +
-										'},' +
-									'},' +
-								'},' +
-							'},' +
-						'},' +
-					'},' +
-					'["speed_locked"] = true,' +
-				'},';
-
-		var cNum = 1;
-	_.forEach(_.get(routes, 'routeLocs'), (route) => {
-		buildTemplate +=
-				'["' + cNum + '"] = {' +
-					'["type"] = "Turning Point",' +
-					'["action"] = "' + _.get(route, 'action') + '",' +
-					'["x"] = coord.LLtoLO(' + _.get(route, ['lonLat', 1]) + ", " + _.get(route, ['lonLat', 0]) + ').x, ' +
-					'["y"] = coord.LLtoLO(' + _.get(route, ['lonLat', 1]) + ", " + _.get(route, ['lonLat', 0]) + ").z, " +
-					'["speed"] = 20' +
-					'["name"] = "route' + cNum + '"' +
-				'},';
-				cNum = cNum + 1;
-	});
-
-	buildTemplate +=
-			')' +
-		'}';
-	*/
-	console.log('BT: ', buildTemplate.route.points);
+	// console.log('BT: ', buildTemplate.route.points);
 	return buildTemplate;
 });
 
@@ -1758,7 +1700,7 @@ _.set(exports, 'spawnConvoy', function (serverName, groupName, convoySide, baseT
 	curGroupSpawn = _.replace(curGroupSpawn, "#UNITS", groupArray);
 	// console.log('CGS: ', curGroupSpawn);
 	var curCMD = exports.spawnGrp(curGroupSpawn, _.get(curGrpObj, 'country'), _.get(curGrpObj, 'category'));
-	console.log('CCD: ', curCMD);
+	// console.log('CCD: ', curCMD);
 	var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
 	var actionObj = {actionObj: sendClient, queName: 'clientArray'};
 	masterDBController.cmdQueActions('save', serverName, actionObj)
