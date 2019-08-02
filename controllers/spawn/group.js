@@ -2290,7 +2290,7 @@ _.set(exports, 'spawnNewMapGrps', function ( serverName ) {
 	var totalUnitsSpawned = 0;
 	var curServer = _.get(constants, ['config']);
 	var totalUnitNum;
-	return masterDBController.baseActions('read', serverName, {name: {$not: /#/}})
+	return masterDBController.baseActions('read', serverName, {name: {$not: /#/}, enabled: true})
 		.then(function (bases) {
 			_.forEach(bases, function (base) {
 				if(!_.includes(_.get(base, 'name'), 'Carrier')){

@@ -9,10 +9,10 @@ const masterDBController = require('../../controllers/db/masterDB');
 const airbaseSyncController = require('../../controllers/serverToDbSync/airbaseSync');
 
 //config
-var mapType = 'Caucasus';
-//var mapType = 'PersianGulf';
+//var mapType = 'Caucasus';
+var mapType = 'PersianGulf';
 var masterServer = '127.0.0.1';
-var serverName = 'DDCSModern';
+var serverName = 'DDCSModernPG';
 
 masterDBController.initDB(serverName, masterServer)
 	.then(function() {
