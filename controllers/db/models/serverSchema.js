@@ -153,6 +153,10 @@ const ServerSchema = new Schema({
 		fullServerRestartOnCampaignWin: {
 			type: Boolean,
 			default: false
+		},
+		isJtacLocked: {
+			type: Boolean,
+			default: true
 		}
 	},
 	{
