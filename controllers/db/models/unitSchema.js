@@ -136,6 +136,9 @@ const UnitSchema = new Schema({
 	},
 	markId: {
 		type: Number
+	},
+	surfType: {
+		type: String
 	}
 },
 	{
