@@ -168,19 +168,15 @@ do
 			local units = group:getUnits()
 			for unitIndex = 1, #units do
 				local unit = units[unitIndex]
-				local pos = unit:getPoint()
-				local surfType = land.getSurfaceType(pos)
-				local categoryType = CategoryNames[unit:getDesc().category]
-				local unitName = unit:getName()
 				if Unit.isActive(unit) then
 					local curUnit = {
 						uType = "unit",
 						data = {}
 					}
-					curUnit.data.category = categoryType
+					curUnit.data.category = CategoryNames[unit:getDesc().category]
 					curUnit.data.groupId = group:getID()
 					curUnit.data.unitId = tonumber(unit:getID())
-					curUnit.data.name = unitName
+					curUnit.data.name = unit:getName()
 					table.insert(completeAliveNames, curUnit.data.name)
 					--curUnit.data.life = tonumber(unit:getLife())
 					local unitPosition = unit:getPosition()
@@ -190,8 +186,9 @@ do
 						lat
 					}
 					curUnit.data.alt = alt
+					local pos = unit:getPoint()
 					curUnit.data.agl = pos.y - land.getHeight({x=pos.x, y = pos.z})
-					curUnit.data.surfType = surfType
+					curUnit.data.surfType = land.getSurfaceType(pos)
 					local unitXYZNorthCorr = coord.LLtoLO(lat + 1, lon)
 					local headingNorthCorr = math.atan2(unitXYZNorthCorr.z - unitPosition.p.z, unitXYZNorthCorr.x - unitPosition.p.x)
 					local heading = math.atan2(unitPosition.x.z, unitPosition.x.x) + headingNorthCorr
@@ -224,14 +221,14 @@ do
 					curUnit.data.inAir = unit:inAir()
 					if unitCache[curUnit.data.name] ~= nil and not Init then
 						if unitCache[curUnit.data.name].lat ~= lat or unitCache[curUnit.data.name].lon ~= lon then
-							if surfType == surfaceTypes[land.SurfaceType.WATER] and categoryType == "GROUND" then
-								env.info("DESTROYING "..unitName.." FOR BEING IN DEEP WATER")
+							if curUnit.data.surfType == surfaceTypes[land.SurfaceType.WATER] and curUnit.data.category == "GROUND" then
+								env.info("DESTROYING "..curUnit.data.name.." FOR BEING IN DEEP WATER")
 								unit:destroy()
 								curUnit = {
 									action = "D",
 									uType = "unit",
 									data = {
-										name = unitName
+										name = curUnit.data.name
 									}
 								}
 							else
