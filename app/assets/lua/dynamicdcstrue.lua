@@ -172,93 +172,92 @@ do
 				local surfType = land.getSurfaceType(pos)
 				local categoryType = CategoryNames[unit:getDesc().category]
 				local unitName = unit:getName()
-				if surfType == surfaceTypes[land.SurfaceType.WATER] and categoryType == "GROUND" then
-					env.info("DESTROYING "..unitName.." FOR BEING IN DEEP WATER")
-					unit:destroy()
+				if Unit.isActive(unit) then
 					local curUnit = {
-						action = "D",
 						uType = "unit",
-						data = {
-							name = unitName
-						}
+						data = {}
 					}
-					table.insert(updateQue.que, curUnit)
-				else
-					if Unit.isActive(unit) then
-						local curUnit = {
-							uType = "unit",
-							data = {}
-						}
-						curUnit.data.category = categoryType
-						curUnit.data.groupId = group:getID()
-						curUnit.data.unitId = tonumber(unit:getID())
-						curUnit.data.name = unitName
-						table.insert(completeAliveNames, curUnit.data.name)
-						--curUnit.data.life = tonumber(unit:getLife())
-						local unitPosition = unit:getPosition()
-						local lat, lon, alt = coord.LOtoLL(unitPosition.p)
-						curUnit.data.lonLatLoc = {
-							lon,
-							lat
-						}
-						curUnit.data.alt = alt
-						curUnit.data.agl = pos.y - land.getHeight({x=pos.x, y = pos.z})
-						curUnit.data.surfType = surfType
-						local unitXYZNorthCorr = coord.LLtoLO(lat + 1, lon)
-						local headingNorthCorr = math.atan2(unitXYZNorthCorr.z - unitPosition.p.z, unitXYZNorthCorr.x - unitPosition.p.x)
-						local heading = math.atan2(unitPosition.x.z, unitPosition.x.x) + headingNorthCorr
-						if heading < 0 then
-							heading = heading + 2 * math.pi
-						end
-						curUnit.data.hdg = math.floor(heading / math.pi * 180);
-						local velocity = unit:getVelocity()
-						if (velocity) then
-							curUnit.data.speed = math.sqrt(velocity.x ^ 2 + velocity.z ^ 2)
-						end
-						local PlayerName = unit:getPlayerName()
-						if PlayerName ~= nil then
-							curUnit.data.playername = PlayerName
-							local curFullAmmo = unit:getAmmo()
-							if curFullAmmo ~= nil then
-								--tprint(curFullAmmo)
-								curUnit.data.ammo = {}
-								for ammoIndex = 1, #curFullAmmo do
-									--tprint(curFullAmmo[ammoIndex])
-									table.insert(curUnit.data.ammo, {
-										["typeName"] = curFullAmmo[ammoIndex].desc.typeName,
-										["count"] = curFullAmmo[ammoIndex].count
-									})
-								end
+					curUnit.data.category = categoryType
+					curUnit.data.groupId = group:getID()
+					curUnit.data.unitId = tonumber(unit:getID())
+					curUnit.data.name = unitName
+					table.insert(completeAliveNames, curUnit.data.name)
+					--curUnit.data.life = tonumber(unit:getLife())
+					local unitPosition = unit:getPosition()
+					local lat, lon, alt = coord.LOtoLL(unitPosition.p)
+					curUnit.data.lonLatLoc = {
+						lon,
+						lat
+					}
+					curUnit.data.alt = alt
+					curUnit.data.agl = pos.y - land.getHeight({x=pos.x, y = pos.z})
+					curUnit.data.surfType = surfType
+					local unitXYZNorthCorr = coord.LLtoLO(lat + 1, lon)
+					local headingNorthCorr = math.atan2(unitXYZNorthCorr.z - unitPosition.p.z, unitXYZNorthCorr.x - unitPosition.p.x)
+					local heading = math.atan2(unitPosition.x.z, unitPosition.x.x) + headingNorthCorr
+					if heading < 0 then
+						heading = heading + 2 * math.pi
+					end
+					curUnit.data.hdg = math.floor(heading / math.pi * 180);
+					local velocity = unit:getVelocity()
+					if (velocity) then
+						curUnit.data.speed = math.sqrt(velocity.x ^ 2 + velocity.z ^ 2)
+					end
+					local PlayerName = unit:getPlayerName()
+					if PlayerName ~= nil then
+						curUnit.data.playername = PlayerName
+						local curFullAmmo = unit:getAmmo()
+						if curFullAmmo ~= nil then
+							--tprint(curFullAmmo)
+							curUnit.data.ammo = {}
+							for ammoIndex = 1, #curFullAmmo do
+								--tprint(curFullAmmo[ammoIndex])
+								table.insert(curUnit.data.ammo, {
+									["typeName"] = curFullAmmo[ammoIndex].desc.typeName,
+									["count"] = curFullAmmo[ammoIndex].count
+								})
 							end
-						else
-							curUnit.data.playername = ""
 						end
-						curUnit.data.inAir = unit:inAir()
-						if unitCache[curUnit.data.name] ~= nil and not Init then
-							if unitCache[curUnit.data.name].lat ~= lat or unitCache[curUnit.data.name].lon ~= lon then
+					else
+						curUnit.data.playername = ""
+					end
+					curUnit.data.inAir = unit:inAir()
+					if unitCache[curUnit.data.name] ~= nil and not Init then
+						if unitCache[curUnit.data.name].lat ~= lat or unitCache[curUnit.data.name].lon ~= lon then
+							if surfType == surfaceTypes[land.SurfaceType.WATER] and categoryType == "GROUND" then
+								env.info("DESTROYING "..unitName.." FOR BEING IN DEEP WATER")
+								unit:destroy()
+								curUnit = {
+									action = "D",
+									uType = "unit",
+									data = {
+										name = unitName
+									}
+								}
+							else
 								unitCache[curUnit.data.name] = {}
 								unitCache[curUnit.data.name].lat = lat
 								unitCache[curUnit.data.name].lon = lon
 								curUnit.action = "U"
-								table.insert(updateQue.que, curUnit)
 							end
-						else
-							unitCache[curUnit.data.name] = {}
-							unitCache[curUnit.data.name].lat = lat
-							unitCache[curUnit.data.name].lon = lon
-							--local maxLife = unit:getLife0()
-							--if maxLife ~= nil then
-							--	curUnit.data.maxLife = tonumber(maxLife)
-							--end
-							curUnit.data.groupName = group:getName()
-							curUnit.data.type = unit:getTypeName()
-							curUnit.data.coalition = coalition
-							curUnit.data.country = CountryNames[unit:getCountry()]
-							curUnit.action = "C"
 							table.insert(updateQue.que, curUnit)
 						end
-						checkUnitDead[curUnit.data.name] = 1
+					else
+						unitCache[curUnit.data.name] = {}
+						unitCache[curUnit.data.name].lat = lat
+						unitCache[curUnit.data.name].lon = lon
+						--local maxLife = unit:getLife0()
+						--if maxLife ~= nil then
+						--	curUnit.data.maxLife = tonumber(maxLife)
+						--end
+						curUnit.data.groupName = group:getName()
+						curUnit.data.type = unit:getTypeName()
+						curUnit.data.coalition = coalition
+						curUnit.data.country = CountryNames[unit:getCountry()]
+						curUnit.action = "C"
+						table.insert(updateQue.que, curUnit)
 					end
+					checkUnitDead[curUnit.data.name] = 1
 				end
 			end
 		end
