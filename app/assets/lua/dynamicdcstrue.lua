@@ -222,7 +222,7 @@ do
 					if unitCache[curUnit.data.name] ~= nil and not Init then
 						if unitCache[curUnit.data.name].lat ~= lat or unitCache[curUnit.data.name].lon ~= lon then
 							--env.info("UPDATE: "..curUnit.data.name.." surf: "..curUnit.data.surfType.." == "..surfaceTypes[land.SurfaceType.WATER].." : "..curUnit.data.category)
-							if curUnit.data.surfType == surfaceTypes[land.SurfaceType.WATER] and curUnit.data.category == "GROUND" then
+							if curUnit.data.surfType == surfaceTypes[land.SurfaceType.WATER] and curUnit.data.category == "GROUND" and curUnit.data.alt <= 0 then
 								env.info("DESTROYING "..curUnit.data.name.." FOR BEING IN DEEP WATER")
 								unit:destroy()
 								local curUnitName = curUnit.data.name
