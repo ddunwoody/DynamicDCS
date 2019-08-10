@@ -10,6 +10,7 @@ const unitsStaticsController = require('../../serverToDbSync/unitsStatics');
 const webPushCommands = require('../../socketIO/webPush');
 
 _.set(exports, 'processEventDead', function (serverName, sessionName, eventObj) {
+	var nowTime = new Date().getTime();
 	// Occurs when an object is completely destroyed.
 	masterDBController.unitActions('read', serverName, {unitId: _.get(eventObj, ['data', 'arg3'])})
 		.then(function (iunit) {
@@ -48,7 +49,8 @@ _.set(exports, 'processEventDead', function (serverName, sessionName, eventObj) 
 								DCSLuaCommands.sendMesgToAll(
 									serverName,
 									_.get(iCurObj, 'msg'),
-									5
+									5,
+									nowTime + _.get(constants, 'time.oneMin', 0)
 								);
 							}
 						}

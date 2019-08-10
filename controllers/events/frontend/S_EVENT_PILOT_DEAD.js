@@ -10,6 +10,7 @@ const playersEvent = require('../../events/backend/players');
 const webPushCommands = require('../../socketIO/webPush');
 
 _.set(exports, 'processEventPilotDead', function (serverName, sessionName, eventObj) {
+	var nowTime = new Date().getTime();
 	// Occurs when the pilot of an aircraft is killed.
 	// Can occur either if the player is alive and crashes or
 	// if a weapon kills the pilot without completely destroying the plane.
@@ -47,7 +48,8 @@ _.set(exports, 'processEventPilotDead', function (serverName, sessionName, event
 								DCSLuaCommands.sendMesgToAll(
 									serverName,
 									_.get(iCurObj, 'msg'),
-									5
+									5,
+									nowTime + _.get(constants, 'time.oneMin', 0)
 								);
 							}
 						}
