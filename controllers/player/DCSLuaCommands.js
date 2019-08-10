@@ -58,30 +58,30 @@ _.assign(exports, {
 			})
 		;
 	},
-	sendMesgToAll: function (serverName, mesg, time) {
+	sendMesgToAll: function (serverName, mesg, time, delayTime) {
 		var curCMD = 'trigger.action.outText([['+mesg+']], '+time+')';
 		var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
-		var actionObj = {actionObj: sendClient, queName: 'clientArray'};
+		var actionObj = {actionObj: sendClient, queName: 'clientArray', timeToExecute: delayTime};
 		masterDBController.cmdQueActions('save', serverName, actionObj)
 			.catch(function (err) {
 				console.log('erroring line16: ', err);
 			})
 		;
 	},
-	sendMesgToCoalition: function (coalition, serverName, mesg, time) {
+	sendMesgToCoalition: function (coalition, serverName, mesg, time, delayTime) {
 		var curCMD = 'trigger.action.outTextForCoalition('+coalition+', [['+mesg+']], '+time+')';
 		var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
-		var actionObj = {actionObj: sendClient, queName: 'clientArray'};
+		var actionObj = {actionObj: sendClient, queName: 'clientArray', timeToExecute: delayTime};
 		masterDBController.cmdQueActions('save', serverName, actionObj)
 			.catch(function (err) {
 				console.log('erroring line27: ', err);
 			})
 		;
 	},
-	sendMesgToGroup: function (groupId, serverName, mesg, time) {
+	sendMesgToGroup: function (groupId, serverName, mesg, time, delayTime) {
 		var curCMD = 'trigger.action.outTextForGroup('+groupId+', [['+mesg+']], '+time+')';
 		var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
-		var actionObj = {actionObj: sendClient, queName: 'clientArray'};
+		var actionObj = {actionObj: sendClient, queName: 'clientArray', timeToExecute: delayTime};
 		masterDBController.cmdQueActions('save', serverName, actionObj)
 			.catch(function (err) {
 				console.log('erroring line38: ', err);

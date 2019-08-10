@@ -19,6 +19,7 @@ const radioTowerController = require('../../action/radioTower');
 exports.shootingUsers = {};
 
 _.set(exports, 'checkShootingUsers', function (serverName) {
+	var nowTime = new Date().getTime();
 	if(_.keys(exports.shootingUsers).length > 0) {
 		_.forEach(exports.shootingUsers, function (user, key) {
 			if(_.get(user, ['startTime']) + 3000 < new Date().getTime()){
@@ -52,7 +53,8 @@ _.set(exports, 'checkShootingUsers', function (serverName) {
 							_.get(shootObj, 'tUnit.groupId'),
 							serverName,
 							'G: ' + _.get(shootObj, 'msg'),
-							20
+							20,
+							nowTime + _.get(constants, 'time.oneMin', 0)
 						);
 					}
 				} else if (_.get(shootObj, 'iUnit.category') === 'GROUND') {
@@ -63,7 +65,8 @@ _.set(exports, 'checkShootingUsers', function (serverName) {
 							_.get(shootObj, 'iUnit.groupId'),
 							serverName,
 							'G: Your ' + _.get(shootObj, 'msg'),
-							20
+							20,
+							nowTime + _.get(constants, 'time.oneMin', 0)
 						);
 					}
 				} else {
@@ -71,7 +74,8 @@ _.set(exports, 'checkShootingUsers', function (serverName) {
 						DCSLuaCommands.sendMesgToAll(
 							serverName,
 							'A: ' + _.get(shootObj, 'msg'),
-							20
+							20,
+							nowTime + _.get(constants, 'time.oneMin', 0)
 						);
 					}
 				}
@@ -90,6 +94,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 	var iCurObj;
 	var iPlayer;
 	var tPlayer;
+	var nowTime = new Date().getTime();
 	// console.log('hit obj: ', serverName, sessionName, eventObj);
 	masterDBController.unitActions('read', serverName, {unitId: iUnitId})
 		.then(function (iunit) {
@@ -213,7 +218,8 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 																_.get(iCurObj, 'tUnit.groupId'),
 																serverName,
 																'G: ' + _.get(iCurObj, 'msg'),
-																20
+																20,
+																nowTime + _.get(constants, 'time.oneMin', 0)
 															);
 														}
 													} else if (_.get(iCurObj, 'iUnit.category') === 'GROUND') {
@@ -224,7 +230,8 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 																_.get(iCurObj, 'iUnit.groupId'),
 																serverName,
 																'G: Your ' + _.get(iCurObj, 'msg'),
-																20
+																20,
+																nowTime + _.get(constants, 'time.oneMin', 0)
 															);
 														}
 													} else {
@@ -232,7 +239,8 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 															DCSLuaCommands.sendMesgToAll(
 																serverName,
 																'A: ' + _.get(iCurObj, 'msg'),
-																20
+																20,
+																nowTime + _.get(constants, 'time.oneMin', 0)
 															);
 														}
 													}
