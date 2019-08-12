@@ -19,7 +19,6 @@ _.assign(exports, {
 	checkTimeToRestart: (serverName) => {
 		var nowTime = new Date().getTime();
 		if(exports.timeToRestart !== 0) {
-			exports.clearCampaignTables(serverName);
 			if(nowTime > exports.timeToRestart) {
 				exports.restartServer(serverName);
 			}
@@ -27,19 +26,25 @@ _.assign(exports, {
 	},
 	clearCampaignTables: (serverName) => {
 		console.log('clearTables');
-		masterDBController.cmdQueActions('removeall', serverName, {})
+		var groupPromise = [];
+		groupPromise.push(masterDBController.cmdQueActions('removeall', serverName, {})
 			.catch(function (err) {
-				console.log('line 29: ', err);
-			})
+				console.log('line 32: ', err);
+			}))
 		;
-		masterDBController.staticCrateActions('removeall', serverName, {})
+		groupPromise.push(masterDBController.staticCrateActions('removeall', serverName, {})
 			.catch(function (err) {
-				console.log('line 34: ', err);
-			})
+				console.log('line 37: ', err);
+			}))
 		;
-		masterDBController.unitActions('removeall', serverName, {})
+		groupPromise.push(masterDBController.unitActions('removeall', serverName, {})
 			.catch(function (err) {
-				console.log('line 39: ', err);
+				console.log('line 42: ', err);
+			}))
+		;
+		return Promise.all(groupPromise)
+			.catch(function (err) {
+				console.log('line 50: ', err);
 			})
 		;
 	},

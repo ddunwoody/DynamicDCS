@@ -160,31 +160,43 @@ _.assign(exports, {
 				});
 				Promise.all(promiseBaseSideCount)
 					.then(function() {
+						var msg;
 						if (!_.isEmpty(bases)) {
 							if(campaignState.red === 0 && !unitsStaticsController.lockUpdates) {
-								var msg = 'Blue has won the campaign, Map will reset in 5 minutes.';
+								msg = 'Blue has won the campaign, Map will reset in 5 minutes.';
 								console.log('BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON ');
-								unitsStaticsController.lockUpdates = true;
-								// restart in 5 mins
-								resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
-								// resetCampaignController.timeToRestart = new Date().getTime() + (60 * 1000);
-								DCSLuaCommands.sendMesgToAll(
-									serverName,
-									msg,
-									_.get(constants, 'time.fiveMins')
-								);
+								masterDBController.serverActions('update', {name: serverName, resetFullCampaign: true})
+									.then(function () {
+										unitsStaticsController.lockUpdates = true;
+										resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
+										DCSLuaCommands.sendMesgToAll(
+											serverName,
+											msg,
+											_.get(constants, 'time.fiveMins')
+										);
+									})
+									.catch(function (err) {
+										console.log('line 178: ', err);
+									})
+								;
 							}
 							if(campaignState.blue === 0 && !unitsStaticsController.lockUpdates) {
-								var msg = 'Red has won the campaign, Map will reset in 5 minutes.';
+								msg = 'Red has won the campaign, Map will reset in 5 minutes.';
 								console.log('RED WON RED WON RED WON RED WON RED WON RED WON RED WON RED WON RED WON ');
-								unitsStaticsController.lockUpdates = true;
-								resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
-								// resetCampaignController.timeToRestart = new Date().getTime() + (60 * 1000);
-								DCSLuaCommands.sendMesgToAll(
-									serverName,
-									msg,
-									_.get(constants, 'time.fiveMins')
-								);
+								masterDBController.serverActions('update', {name: serverName, resetFullCampaign: true})
+									.then(function () {
+										unitsStaticsController.lockUpdates = true;
+										resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
+										DCSLuaCommands.sendMesgToAll(
+											serverName,
+											msg,
+											_.get(constants, 'time.fiveMins')
+										);
+									})
+									.catch(function (err) {
+										console.log('line 197: ', err);
+									})
+								;
 							}
 						}
 					})

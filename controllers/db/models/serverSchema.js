@@ -157,6 +157,10 @@ const ServerSchema = new Schema({
 		isJtacLocked: {
 			type: Boolean,
 			default: true
+		},
+		resetFullCampaign: {
+			type: Boolean,
+			default: false
 		}
 	},
 	{
