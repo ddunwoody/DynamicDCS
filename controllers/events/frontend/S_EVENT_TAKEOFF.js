@@ -42,6 +42,7 @@ _.set(exports, 'processEventTakeoff', function (serverName, sessionName, eventOb
 							if (weaponComplianceController.checkWeaponComplianceOnTakeoff(serverName, iPlayer, curIUnit)) {
 								proximityController.getBasesInProximity(serverName, _.get(curIUnit, 'lonLatLoc'), 5, curUnitSide)
 									.then(function(friendlyBases) {
+										console.log('T6', friendlyBases);
 										if(friendlyBases.length > 0) {
 											iCurObj = {
 												sessionName: sessionName,
@@ -52,6 +53,10 @@ _.set(exports, 'processEventTakeoff', function (serverName, sessionName, eventOb
 												roleCode: 'I',
 												msg: 'C: '+ _.get(curIUnit, 'type') + '('+_.get(curIUnit, 'playername')+') has taken off' + place
 											};
+											console.log('T7', serverName,
+												iPlayer,
+												curIUnit,
+												'Takeoff');
 											userLivesController.removeLifePoints(
 												serverName,
 												iPlayer,

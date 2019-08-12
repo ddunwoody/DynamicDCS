@@ -1364,6 +1364,7 @@ _.assign(exports, {
 					Sessions.update(
 						{name: obj.name},
 						{$set: obj},
+						{ upsert : true },
 						function(err, sessions) {
 							if (err) { reject(err) }
 							resolve(sessions);

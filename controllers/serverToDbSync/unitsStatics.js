@@ -49,6 +49,12 @@ _.set(exports, 'processUnitUpdates', function (serverName, sessionName, unitObj)
 						_.set(curData, 'proxChkGrp', stParse[3]);
 						_.set(curData, 'playerCanDrive', stParse[5]);
 					}
+
+					//update location of carrier in aircraft DB
+					if (_.includes(curData.name, 'Carrier')) {
+						masterDBController.baseActions('update', serverName, {_id: curUnitName, centerLoc: curData.lonLatLoc});
+					}
+
 					if (curData.playername && (_.get(unitObj, 'action') === 'C')) {
 						// console.log('playername', unitObj);
 						menuUpdateController.logisticsMenu('resetMenu', serverName, unitObj.data);

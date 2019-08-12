@@ -229,7 +229,7 @@ _.assign(exports, {
 									console.log('intCurBaseAt: ', curBaseName);
 									masterDBController.unitActions('read', serverName, {name: curBaseName + ' Logistics', dead: false})
 										.then(function (aliveLogistics) {
-											if (aliveLogistics.length > 0) {
+											if (aliveLogistics.length > 0 || _.includes(curBaseName, 'Carrier')) {
 												if(intCargoType === 'loadJTAC') {
 													masterDBController.unitActions('updateByUnitId', serverName, {unitId: curUnit.unitId, intCargoType: '|JTAC|' + curBaseName + '|'})
 														.then(function () {

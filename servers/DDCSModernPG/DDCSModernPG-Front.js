@@ -77,14 +77,18 @@ masterDBController.initDB(serverName, masterServer)
 						masterDBController.sessionsActions('readLatest', serverName, {})
 							.then(function (latestSession) {
 								// console.log('sn: ', serverEpoc, startAbs, curAbs, latestSession.name);
+								console.log('create new session: ', sessionName, ' !== ', _.get(latestSession,'name', ''), ' || ',  _.get(exports, ['curAbsTime'], 0), ' > ', curAbs);
 								if (sessionName !== _.get(latestSession,'name', '') || _.get(exports, ['curAbsTime'], 0) > curAbs) {
 									minutesPlayedController.resetMinutesPlayed(serverName);
 									masterDBController.campaignsActions('readLatest', serverName, {})
 										.then(function (campaign) {
+											// console.log('CAMP: ', campaign);
 											if (campaign) {
 												_.set(newSession, 'campaignName', campaign.name);
-												masterDBController.sessionsActions('save', serverName, newSession)
-													.then(function() {
+												// console.log('SESS: ', newSession);
+												masterDBController.sessionsActions('update', serverName, newSession)
+													.then(function(newSessionName) {
+														console.log('SESSNAME: ', newSession, newSessionName);
 														_.set(exports, 'sessionName', sessionName)
 													})
 													.catch(function (err) {
@@ -126,8 +130,10 @@ masterDBController.initDB(serverName, masterServer)
 						console.log('SYNC: ', sychrontronController.isServerSynced);
 					}
 					// console.log('CB: ', !_.get(exports, 'sessionName'));
+					// console.log('ISS: ', sychrontronController.isServerSynced, exports.sessionName);
 					_.set(exports, 'curServerUnitCnt', cbArray.unitCount);
 					if(!_.get(exports, 'sessionName')) {
+						console.log('getLatestSession: ');
 						exports.getLatestSession(serverName, cbArray.epoc, cbArray.startAbsTime,  cbArray.curAbsTime);
 					} else {
 						_.forEach(_.get(cbArray, 'que', []), function (queObj) {
