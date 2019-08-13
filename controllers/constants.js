@@ -192,6 +192,23 @@ _.assign(exports, {
 		thirtySecs: 30 * 1000,
 		tenMinutes: 10 * 60 * 1000
 	},
+	crateTypes: [
+		'iso_container_small',
+		'iso_container',
+		'ammo_cargo',
+		'barrels_cargo',
+		'container_cargo',
+		'fueltank_cargo',
+		'f_bar_cargo',
+		'm117_cargo',
+		'oiltank_cargo',
+		'pipes_big_cargo',
+		'pipes_small_cargo',
+		'tetrapod_cargo',
+		'trunks_long_cargo',
+		'trunks_small_cargo',
+		'uh1h_cargo',
+	],
 	getBases: function (serverName) {
 		return masterDBController.baseActions('read', serverName)
 			.then(function (bases) {

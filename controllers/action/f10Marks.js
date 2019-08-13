@@ -72,71 +72,73 @@ _.assign(exports, {
 		;
 	},
 	setUnitMark: function (serverName, unit) {
-		// console.log('unit: ', unit);
-		masterDBController.unitActions('read', serverName, {_id: _.get(unit, 'name')})
-			.then(function (cUnit) {
-				var curUnit = _.first(cUnit);
-				// console.log('SETUNITMARK: ', curUnit, cUnit);
-				if (_.get(curUnit, 'markId')) {
-					var curCMD = 'trigger.action.removeMark(' + _.get(curUnit, 'markId') + ')';
-					var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
-					var actionObj = {actionObj: sendClient, queName: 'clientArray'};
-					masterDBController.cmdQueActions('save', serverName, actionObj)
-						.then(function () {
-							var randomMarkId = _.random(1000, 9999);
-							var curCMD = 'trigger.action.markToCoalition(' +
-								randomMarkId + ', [[' +
-								_.get(curUnit, 'name') + ']], ' +
-								'coord.LLtoLO(' + _.get(curUnit, ['lonLatLoc', 1]) + ', ' + _.get(curUnit, ['lonLatLoc', 0]) + '), ' +
-								' ' + _.get(curUnit, 'coalition') + ',' +
-								' true)';
-							var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
-							var actionObj = {actionObj: sendClient, queName: 'clientArray'};
-							masterDBController.cmdQueActions('save', serverName, actionObj)
-								.then(function () {
-									masterDBController.unitActions('update', serverName, {_id: _.get(curUnit, '_id'), markId: randomMarkId})
-										.catch(function (err) {
-											console.log('erroring line99: ', err);
-										})
-									;
-								})
-								.catch(function (err) {
-									console.log('erroring line13: ', err);
-								})
-							;
-						})
-						.catch(function (err) {
-							console.log('erroring line13: ', err);
-						})
-					;
-				} else {
-					var randomMarkId = _.random(1000, 9999);
-					var curCMD = 'trigger.action.markToCoalition(' +
-						randomMarkId + ', [[' +
-						_.get(curUnit, 'name') + ']], ' +
-						'coord.LLtoLO(' + _.get(curUnit, ['lonLatLoc', 1]) + ', ' + _.get(curUnit, ['lonLatLoc', 0]) + '),' +
-						' ' + _.get(curUnit, 'coalition') + ',' +
-						' true)';
-					var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
-					var actionObj = {actionObj: sendClient, queName: 'clientArray'};
-					masterDBController.cmdQueActions('save', serverName, actionObj)
-						.then(function () {
-							masterDBController.unitActions('update', serverName, {_id: _.get(curUnit, '_id'), markId: randomMarkId})
-								.catch(function (err) {
-									console.log('erroring line126: ', err);
-								})
-							;
-						})
-						.catch(function (err) {
-							console.log('erroring line13: ', err);
-						})
-					;
-				}
-				//console.log('CMD: ', curCMD);
-			})
-			.catch(function (err) {
-				console.log('erroring line138: ', err);
-			})
-		;
+		console.log('unitPOP: ', _.includes(_.get(constants, 'crateTypes'), _.get(unit, 'type')), unit);
+		if (_.includes(_.get(constants, 'crateTypes'), _.get(unit, 'type'))) {
+			masterDBController.unitActions('read', serverName, {_id: _.get(unit, 'name')})
+				.then(function (cUnit) {
+					var curUnit = _.first(cUnit);
+					// console.log('SETUNITMARK: ', curUnit, cUnit);
+					if (_.get(curUnit, 'markId')) {
+						var curCMD = 'trigger.action.removeMark(' + _.get(curUnit, 'markId') + ')';
+						var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
+						var actionObj = {actionObj: sendClient, queName: 'clientArray'};
+						masterDBController.cmdQueActions('save', serverName, actionObj)
+							.then(function () {
+								var randomMarkId = _.random(1000, 9999);
+								var curCMD = 'trigger.action.markToCoalition(' +
+									randomMarkId + ', [[' +
+									_.get(curUnit, 'name') + ']], ' +
+									'coord.LLtoLO(' + _.get(curUnit, ['lonLatLoc', 1]) + ', ' + _.get(curUnit, ['lonLatLoc', 0]) + '), ' +
+									' ' + _.get(curUnit, 'coalition') + ',' +
+									' true)';
+								var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
+								var actionObj = {actionObj: sendClient, queName: 'clientArray'};
+								masterDBController.cmdQueActions('save', serverName, actionObj)
+									.then(function () {
+										masterDBController.unitActions('update', serverName, {_id: _.get(curUnit, '_id'), markId: randomMarkId})
+											.catch(function (err) {
+												console.log('erroring line99: ', err);
+											})
+										;
+									})
+									.catch(function (err) {
+										console.log('erroring line13: ', err);
+									})
+								;
+							})
+							.catch(function (err) {
+								console.log('erroring line13: ', err);
+							})
+						;
+					} else {
+						var randomMarkId = _.random(1000, 9999);
+						var curCMD = 'trigger.action.markToCoalition(' +
+							randomMarkId + ', [[' +
+							_.get(curUnit, 'name') + ']], ' +
+							'coord.LLtoLO(' + _.get(curUnit, ['lonLatLoc', 1]) + ', ' + _.get(curUnit, ['lonLatLoc', 0]) + '),' +
+							' ' + _.get(curUnit, 'coalition') + ',' +
+							' true)';
+						var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
+						var actionObj = {actionObj: sendClient, queName: 'clientArray'};
+						masterDBController.cmdQueActions('save', serverName, actionObj)
+							.then(function () {
+								masterDBController.unitActions('update', serverName, {_id: _.get(curUnit, '_id'), markId: randomMarkId})
+									.catch(function (err) {
+										console.log('erroring line126: ', err);
+									})
+								;
+							})
+							.catch(function (err) {
+								console.log('erroring line13: ', err);
+							})
+						;
+					}
+					//console.log('CMD: ', curCMD);
+				})
+				.catch(function (err) {
+					console.log('erroring line138: ', err);
+				})
+			;
+		}
 	}
 });
