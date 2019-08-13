@@ -89,14 +89,23 @@ _.set(exports, 'processTimer', function (serverName, serverSecs) {
 			mesg = 'Server is restarting in 1 minute, Server Is Locked!';
 			_.set(exports, 'timerObj.oneMinute', true);
 			DCSLuaCommands.setIsOpenSlotFlag(serverName, 0);
-			masterDBController.srvPlayerActions('read', serverName, { sessionName: latestSession.name })
-				.then(function (playerArray) {
-					_.forEach(playerArray, function (player) {
-						DCSLuaCommands.kickPlayer(serverName, player.id, 'Server is now restarting!');
-					});
+			masterDBController.sessionsActions('readLatest', serverName, {})
+				.then(function (latestSession) {
+					if (latestSession.name) {
+						masterDBController.srvPlayerActions('read', serverName, { sessionName: latestSession.name })
+							.then(function (playerArray) {
+								_.forEach(playerArray, function (player) {
+									DCSLuaCommands.kickPlayer(serverName, player.id, 'Server is now restarting!');
+								});
+							})
+							.catch(function (err) {
+								console.log('line101: ', err);
+							})
+						;
+					}
 				})
 				.catch(function (err) {
-					console.log('line101: ', err);
+					console.log('line107: ', err);
 				})
 			;
 		}
