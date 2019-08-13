@@ -123,7 +123,7 @@ _.set(exports, 'processUnitUpdates', function (serverName, sessionName, unitObj)
 								//curServers[serverName].updateQue['q' + _.get(curUnit, ['coalition'])].push(_.cloneDeep(iCurObj));
 								//curServers[serverName].updateQue.qadmin.push(_.cloneDeep(iCurObj));
 								if (curData.category === 'STRUCTURE') {
-									console.log('SUM: ', curData);
+									// console.log('SUM: ', curData);
 									f10MarksController.setUnitMark(serverName, curData);
 								}
 							})
@@ -165,7 +165,7 @@ _.set(exports, 'processUnitUpdates', function (serverName, sessionName, unitObj)
 									//curServers[serverName].updateQue['q' + parseFloat(_.get(unitObj, 'data.coalition'))].push(_.cloneDeep(iCurObj));
 									//curServers[serverName].updateQue.qadmin.push(_.cloneDeep(iCurObj));
 									if (curData.category === 'STRUCTURE') {
-										console.log('SUM: ', curData);
+										// console.log('SUM: ', curData);
 										f10MarksController.setUnitMark(serverName, curData);
 									}
 								})

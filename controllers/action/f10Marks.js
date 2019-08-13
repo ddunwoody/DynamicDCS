@@ -72,7 +72,7 @@ _.assign(exports, {
 		;
 	},
 	setUnitMark: function (serverName, unit) {
-		console.log('unitPOP: ', !_.includes(_.get(constants, 'crateTypes'), _.get(unit, 'type')), unit);
+		// console.log('unitPOP: ', !_.includes(_.get(constants, 'crateTypes'), _.get(unit, 'type')), unit);
 		if (!_.includes(_.get(constants, 'crateTypes'), _.get(unit, 'type'))) {
 			masterDBController.unitActions('read', serverName, {_id: _.get(unit, 'name')})
 				.then(function (cUnit) {
