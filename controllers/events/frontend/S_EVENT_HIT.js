@@ -175,6 +175,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 										var curWeapon = _.find(_.get(constants, 'weaponsDictionary'), {_id: _.get(eventObj, ['data', 'arg7', 'typeName'])} );
 										// console.log('dcsWeapObj: ', _.get(eventObj, ['data', 'arg7']));
 										if(curWeapon){
+											console.log('CW: ', curWeapon);
 											if (_.get(iCurObj, 'iucid') || _.get(iCurObj, 'tucid') || isOwnedUnit) {
 												if (_.startsWith(_.get(curWeapon, 'name'), 'weapons.shells')){
 													_.set(exports.shootingUsers, [iUnitId, 'count'], _.get(exports.shootingUsers, [iUnitId, 'count'], 0)+1);
@@ -250,7 +251,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 											var shotCount;
 											var shotpoints;
 											// console.log('weapon not here');
-											// console.log('Weapon Unknown: ', _.get(eventObj, ['data', 'arg7', 'typeName']));
+											console.log('Weapon Unknown: ', _.get(eventObj, ['data', 'arg7', 'typeName']));
 											_.set(exports.shootingUsers, [iUnitId, 'count'], _.get(exports.shootingUsers, [iUnitId, 'count'], 0)+1);
 											_.set(exports.shootingUsers, [iUnitId, 'startTime'], new Date().getTime());
 											_.set(exports.shootingUsers, [iUnitId, 'serverName'], serverName);
