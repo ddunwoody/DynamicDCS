@@ -1362,47 +1362,45 @@ _.set(exports, 'spawnBaseReinforcementGroup', function (serverName, side, baseNa
 	_.forEach(curBaseSpawnCats, function (tickVal, name) {
 		var curTickVal = _.cloneDeep(tickVal);
 		for (var i = 0; i < curTickVal; i++) {
-			if (!(name === 'samRadar')){
-				curAngle = 0;
-				curRndSpawn = _.sortBy(exports.getRndFromSpawnCat(serverName, name, side, false, forceSpawn), 'sort');
-				compactUnits = [];
-				infoSpwn = _.first(curRndSpawn);
-				centerRadar = _.get(infoSpwn, 'centerRadar') ? 1 : 0;
-				polyCheck = _.get(infoSpwn, 'centerRadar') ? 'buildingPoly' : 'unitPoly';
+			curAngle = 0;
+			curRndSpawn = _.sortBy(exports.getRndFromSpawnCat(serverName, name, side, false, forceSpawn), 'sort');
+			compactUnits = [];
+			infoSpwn = _.first(curRndSpawn);
+			centerRadar = _.get(infoSpwn, 'centerRadar') ? 1 : 0;
+			polyCheck = _.get(infoSpwn, 'centerRadar') ? 'buildingPoly' : 'unitPoly';
 
-				if (_.get(infoSpwn, 'spoke')) {
-					randLatLonInBase = zoneController.getRandomLatLonFromBase(serverName, baseName, polyCheck);
-					groupedUnits = [];
-					curSpokeNum = curRndSpawn.length - centerRadar;
-					curSpokeDeg = 359 / curSpokeNum;
+			if (_.get(infoSpwn, 'spoke')) {
+				randLatLonInBase = zoneController.getRandomLatLonFromBase(serverName, baseName, polyCheck);
+				groupedUnits = [];
+				curSpokeNum = curRndSpawn.length - centerRadar;
+				curSpokeDeg = 359 / curSpokeNum;
 
-					if (_.get(infoSpwn, 'centerRadar')) {
-						//main radar
-						curCat = _.cloneDeep(infoSpwn);
-						_.set(curCat, 'lonLatLoc', randLatLonInBase);
-						groupedUnits.push(curCat);
-					}
-					//secondary radar
-					for (var j = _.cloneDeep(centerRadar); j < _.get(infoSpwn, 'secRadarNum') + centerRadar; j++) {
-						curCat = _.cloneDeep(curRndSpawn[j]);
-						_.set(curCat, 'lonLatLoc', zoneController.getLonLatFromDistanceDirection(randLatLonInBase, curAngle, _.get(curCat, 'spokeDistance') / 2));
-						curAngle += curSpokeDeg;
-						groupedUnits.push(curCat);
-					}
-					//launchers
-					for (var k = _.get(infoSpwn, 'secRadarNum') + centerRadar; k < curSpokeNum + centerRadar; k++) {
-						curCat = _.cloneDeep(curRndSpawn[k]);
-						_.set(curCat, 'lonLatLoc', zoneController.getLonLatFromDistanceDirection(randLatLonInBase, curAngle, _.get(curCat, 'spokeDistance')));
-						curAngle += curSpokeDeg;
-						groupedUnits.push(curCat);
-					}
-					compactUnits = _.compact(groupedUnits);
-				} else {
-					compactUnits = _.compact(curRndSpawn);
+				if (_.get(infoSpwn, 'centerRadar')) {
+					//main radar
+					curCat = _.cloneDeep(infoSpwn);
+					_.set(curCat, 'lonLatLoc', randLatLonInBase);
+					groupedUnits.push(curCat);
 				}
-				totalUnits += compactUnits.length;
-				exports.spawnGroup(serverName, compactUnits, baseName, side);
+				//secondary radar
+				for (var j = _.cloneDeep(centerRadar); j < _.get(infoSpwn, 'secRadarNum') + centerRadar; j++) {
+					curCat = _.cloneDeep(curRndSpawn[j]);
+					_.set(curCat, 'lonLatLoc', zoneController.getLonLatFromDistanceDirection(randLatLonInBase, curAngle, _.get(curCat, 'spokeDistance') / 2));
+					curAngle += curSpokeDeg;
+					groupedUnits.push(curCat);
+				}
+				//launchers
+				for (var k = _.get(infoSpwn, 'secRadarNum') + centerRadar; k < curSpokeNum + centerRadar; k++) {
+					curCat = _.cloneDeep(curRndSpawn[k]);
+					_.set(curCat, 'lonLatLoc', zoneController.getLonLatFromDistanceDirection(randLatLonInBase, curAngle, _.get(curCat, 'spokeDistance')));
+					curAngle += curSpokeDeg;
+					groupedUnits.push(curCat);
+				}
+				compactUnits = _.compact(groupedUnits);
+			} else {
+				compactUnits = _.compact(curRndSpawn);
 			}
+			totalUnits += compactUnits.length;
+			exports.spawnGroup(serverName, compactUnits, baseName, side);
 		}
 		if (name === 'samRadar' && !init) {
 			exports.spawnSAMNet(serverName, side, baseName);
@@ -1412,8 +1410,8 @@ _.set(exports, 'spawnBaseReinforcementGroup', function (serverName, side, baseNa
 			totalUnits += (curTickVal * exports.spawnLayer2Reinforcements(serverName, 'antiAir', 2, curTickVal, side, baseName));
 		}
 
-		if(name === 'samIR' && curTickVal > 0 && _.get(curServer, 'timePeriod') === 'modern') {
-			totalUnits += (curTickVal * exports.spawnLayer2Reinforcements(serverName, 'samIR', 1, curTickVal, side, baseName));
+		if(name === 'mobileAntiAir' && curTickVal > 0 && _.get(curServer, 'timePeriod') === 'modern') {
+			totalUnits += (curTickVal * exports.spawnLayer2Reinforcements(serverName, 'mobileAntiAir', 2, curTickVal, side, baseName));
 		}
 	});
 	console.log('return total', totalUnits);
