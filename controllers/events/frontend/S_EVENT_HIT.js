@@ -48,6 +48,7 @@ _.set(exports, 'checkShootingUsers', function (serverName) {
 				if (_.get(shootObj, 'tUnit.category') === 'GROUND') {
 					radioTowerController.baseUnitUnderAttack(serverName, _.get(shootObj, 'tUnit'));
 					if (_.get(constants, 'config.inGameHitMessages', true)) {
+						console.log('shooting1: ', _.get(shootObj, 'msg'));
 						DCSLuaCommands.sendMesgToAll(
 							serverName,
 							'A: ' + _.get(shootObj, 'msg'),
@@ -58,7 +59,7 @@ _.set(exports, 'checkShootingUsers', function (serverName) {
 				} else if (_.get(shootObj, 'iUnit.category') === 'GROUND') {
 					radioTowerController.baseUnitUnderAttack(serverName, _.get(shootObj, 'tUnit'));
 					if (_.get(constants, 'config.inGameHitMessages', true) || _.get(exports.shootingUsers, [key, 'isOwnedUnit'], false)) {
-						console.log('shooting: ', 'G: Your ' + _.get(shootObj, 'msg'));
+						console.log('shooting2: ', _.get(shootObj, 'msg'));
 						DCSLuaCommands.sendMesgToAll(
 							serverName,
 							'A: ' + _.get(shootObj, 'msg'),
@@ -68,6 +69,7 @@ _.set(exports, 'checkShootingUsers', function (serverName) {
 					}
 				} else {
 					if (_.get(constants, 'config.inGameHitMessages', true)) {
+						console.log('shooting3: ', _.get(shootObj, 'msg'));
 						DCSLuaCommands.sendMesgToAll(
 							serverName,
 							'A: ' + _.get(shootObj, 'msg'),
@@ -245,6 +247,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 													if (_.get(iCurObj, 'tUnit.category') === 'GROUND') {
 														radioTowerController.baseUnitUnderAttack(serverName, _.get(iCurObj, 'tUnit'));
 														if (_.get(constants, 'config.inGameHitMessages', true)) {
+															console.log('groundhit: ', _.get(iCurObj, 'msg'));
 															DCSLuaCommands.sendMesgToAll(
 																serverName,
 																'A: ' + _.get(iCurObj, 'msg'),
@@ -254,6 +257,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 														}
 													} else if (_.get(iCurObj, 'iUnit.category') === 'GROUND') {
 														if (_.get(constants, 'config.inGameHitMessages', true) || isOwnedUnit) {
+															console.log('groundrecievehit: ', _.get(iCurObj, 'msg'));
 															DCSLuaCommands.sendMesgToAll(
 																serverName,
 																'A: ' + _.get(iCurObj, 'msg'),
@@ -263,6 +267,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 														}
 													} else {
 														if (_.get(constants, 'config.inGameHitMessages', true)) {
+															console.log('reg hit: ', _.get(iCurObj, 'msg'));
 															DCSLuaCommands.sendMesgToAll(
 																serverName,
 																'A: ' + _.get(iCurObj, 'msg'),
