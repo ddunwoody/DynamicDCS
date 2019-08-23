@@ -45,7 +45,38 @@ _.set(exports, 'checkShootingUsers', function (serverName) {
 						})
 					;
 				}
-
+				if (_.get(shootObj, 'tUnit.category') === 'GROUND') {
+					radioTowerController.baseUnitUnderAttack(serverName, _.get(shootObj, 'tUnit'));
+					if (_.get(constants, 'config.inGameHitMessages', true)) {
+						DCSLuaCommands.sendMesgToAll(
+							serverName,
+							'A: ' + _.get(shootObj, 'msg'),
+							20,
+							nowTime + _.get(constants, 'time.oneMin', 0)
+						);
+					}
+				} else if (_.get(shootObj, 'iUnit.category') === 'GROUND') {
+					radioTowerController.baseUnitUnderAttack(serverName, _.get(shootObj, 'tUnit'));
+					if (_.get(constants, 'config.inGameHitMessages', true) || _.get(exports.shootingUsers, [key, 'isOwnedUnit'], false)) {
+						console.log('shooting: ', 'G: Your ' + _.get(shootObj, 'msg'));
+						DCSLuaCommands.sendMesgToAll(
+							serverName,
+							'A: ' + _.get(shootObj, 'msg'),
+							20,
+							nowTime + _.get(constants, 'time.oneMin', 0)
+						);
+					}
+				} else {
+					if (_.get(constants, 'config.inGameHitMessages', true)) {
+						DCSLuaCommands.sendMesgToAll(
+							serverName,
+							'A: ' + _.get(shootObj, 'msg'),
+							20,
+							nowTime + _.get(constants, 'time.oneMin', 0)
+						);
+					}
+				}
+				/*
 				if (_.get(shootObj, 'tUnit.category') === 'GROUND') {
 					radioTowerController.baseUnitUnderAttack(serverName, _.get(shootObj, 'tUnit'));
 					if (_.get(constants, 'config.inGameHitMessages', true)) {
@@ -79,7 +110,7 @@ _.set(exports, 'checkShootingUsers', function (serverName) {
 						);
 					}
 				}
-
+				*/
 				delete exports.shootingUsers[key];
 			}
 		});
@@ -211,7 +242,38 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 															})
 														;
 													}
+													if (_.get(iCurObj, 'tUnit.category') === 'GROUND') {
+														radioTowerController.baseUnitUnderAttack(serverName, _.get(iCurObj, 'tUnit'));
+														if (_.get(constants, 'config.inGameHitMessages', true)) {
+															DCSLuaCommands.sendMesgToAll(
+																serverName,
+																'A: ' + _.get(iCurObj, 'msg'),
+																20,
+																nowTime + _.get(constants, 'time.oneMin', 0)
+															);
+														}
+													} else if (_.get(iCurObj, 'iUnit.category') === 'GROUND') {
+														if (_.get(constants, 'config.inGameHitMessages', true) || isOwnedUnit) {
+															DCSLuaCommands.sendMesgToAll(
+																serverName,
+																'A: ' + _.get(iCurObj, 'msg'),
+																20,
+																nowTime + _.get(constants, 'time.oneMin', 0)
+															);
+														}
+													} else {
+														if (_.get(constants, 'config.inGameHitMessages', true)) {
+															DCSLuaCommands.sendMesgToAll(
+																serverName,
+																'A: ' + _.get(iCurObj, 'msg'),
+																20,
+																nowTime + _.get(constants, 'time.oneMin', 0)
+															);
+														}
+													}
 
+
+													/*
 													if (_.get(iCurObj, 'tUnit.category') === 'GROUND') {
 														radioTowerController.baseUnitUnderAttack(serverName, _.get(iCurObj, 'tUnit'));
 														if (_.get(constants, 'config.inGameHitMessages', true)) {
@@ -247,6 +309,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 															);
 														}
 													}
+												*/
 												}
 											}
 										} else {
