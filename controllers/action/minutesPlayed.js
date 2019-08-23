@@ -108,22 +108,24 @@ _.assign(exports, {
 				})
 					.then(function (playerArray) {
 						// console.log('playersInFiveMinutes: ', playerArray.length);
+						var processPromise = [];
 						_.forEach(playerArray, function (player) {
 							// console.log('isPlayerTimeGreater: ', player.name, new Date(player.updatedAt).getTime() > unitsNewThan, new Date(player.updatedAt).getTime() - unitsNewThan);
 							totalMinsPerSide[player.side] = totalMinsPerSide[player.side] + 5;
-							masterDBController.srvPlayerActions('addMinutesPlayed', serverName, {
+							processPromise.push(masterDBController.srvPlayerActions('addMinutesPlayed', serverName, {
 								_id: player._id,
 								minutesPlayed: 5,
 								side: player.side
-							})
-								.then(function() {
-									exports.updateSession(serverName, latestSession);
-								})
-								.catch(function (err) {
-									console.log('err line62: ', err);
-								})
-							;
+							}));
 						});
+						Promise.all(processPromise)
+							.then(function() {
+								exports.updateSession(serverName, latestSession);
+							})
+							.catch(function() {
+								console.log('err line133: ', err);
+							})
+						;
 						console.log('PlayerFiveMinCount: ', totalMinsPerSide);
 					})
 					.catch(function (err) {
