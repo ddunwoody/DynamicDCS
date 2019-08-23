@@ -215,6 +215,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 													if (_.get(iCurObj, 'tUnit.category') === 'GROUND') {
 														radioTowerController.baseUnitUnderAttack(serverName, _.get(iCurObj, 'tUnit'));
 														if (_.get(constants, 'config.inGameHitMessages', true)) {
+															console.log('singleHit1: ', 'G: Your ' + _.get(iCurObj, 'msg'));
 															// console.log('FiredAt: ', _.get(iCurObj, 'tUnit.groupId'));
 															DCSLuaCommands.sendMesgToGroup(
 																_.get(iCurObj, 'tUnit.groupId'),
@@ -226,7 +227,7 @@ _.set(exports, 'processEventHit', function (serverName, sessionName, eventObj) {
 														}
 													} else if (_.get(iCurObj, 'iUnit.category') === 'GROUND') {
 														if (_.get(constants, 'config.inGameHitMessages', true) || isOwnedUnit) {
-															console.log('singleHit: ', 'G: Your ' + _.get(iCurObj, 'msg'));
+															console.log('singleHit2: ', 'G: Your ' + _.get(iCurObj, 'msg'));
 															// console.log('FiredBy: ', _.get(iCurObj, 'iUnit.groupId'));
 															DCSLuaCommands.sendMesgToGroup(
 																_.get(iCurObj, 'iUnit.groupId'),
