@@ -52,6 +52,7 @@ _.assign(exports, {
 								totalMinutesPlayed_blue: totalMinutesPlayed_blue,
 								totalMinutesPlayed_red: totalMinutesPlayed_red
 							});
+							console.log('campaignUpdate: Blue: ', totalMinutesPlayed_blue, ' Red: ', totalMinutesPlayed_red);
 						})
 						.catch(function (err) {
 							console.log('line54', err);
@@ -80,6 +81,7 @@ _.assign(exports, {
 				})
 					.then(function() {
 						exports.updateLatestCampaign(serverName);
+						console.log('sessionUpdate: Blue: ', currentSessionMinutesPlayed_blue, ' Red: ', currentSessionMinutesPlayed_red);
 					})
 					.catch(function (err) {
 						console.log('err line49: ', err);
@@ -92,6 +94,10 @@ _.assign(exports, {
 		;
 	},
 	recordFiveMinutesPlayed: (serverName) => {
+		var totalMinsPerSide = {
+			"1": 0,
+			"2": 0
+		};
 		masterDBController.sessionsActions('readLatest', serverName, {})
 			.then(function (latestSession) {
 				var unitsNewThan = new Date().getTime() - _.get(constants, ['time', 'fourMins'], 0);
@@ -104,6 +110,7 @@ _.assign(exports, {
 						// console.log('playersInFiveMinutes: ', playerArray.length);
 						_.forEach(playerArray, function (player) {
 							// console.log('isPlayerTimeGreater: ', player.name, new Date(player.updatedAt).getTime() > unitsNewThan, new Date(player.updatedAt).getTime() - unitsNewThan);
+							totalMinsPerSide[player.side] = totalMinsPerSide[player.side] + 5;
 							masterDBController.srvPlayerActions('addMinutesPlayed', serverName, {
 								_id: player._id,
 								minutesPlayed: 5,
@@ -116,7 +123,8 @@ _.assign(exports, {
 									console.log('err line62: ', err);
 								})
 							;
-						})
+						});
+						console.log('PlayerFiveMinCount: ', totalMinsPerSide);
 					})
 					.catch(function (err) {
 						console.log('err line62: ', err);
@@ -140,6 +148,7 @@ _.assign(exports, {
 									side: player.side
 								});
 							});
+							console.log('mins reset');
 						})
 						.catch(function (err) {
 							console.log('err line84: ', err);
