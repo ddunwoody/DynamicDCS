@@ -7,7 +7,7 @@ const masterDBController = require('../db/masterDB');
 const constants = require('../constants');
 
 //move to db eventually
-var ratioToSendConvoys = 2; //:1
+var ratioToSendConvoys = 1.25; //:1
 
 _.assign(exports, {
 	checkCurrentPlayerBalance: (serverName) => {
