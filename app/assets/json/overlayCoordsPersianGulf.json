@@ -19,6 +19,16 @@
     "lngc": 54.813116140778,
     "capturePoint": true
   },
+  "Fujairah Intl": {
+    "latc": 25.105735807567,
+    "lngc": 56.340423943738,
+    "capturePoint": false
+  },
+  "Khonj_MOB": {
+    "latc": 27.881948133238,
+    "lngc": 53.433438623203,
+    "capturePoint": false
+  },
   "Havadarya": {
     "latc": 27.159927526116,
     "lngc": 56.183089447173,
@@ -332,6 +342,11 @@
   "DP06-Ras-al-Khaimah_FOB": {
     "latc": 25.882400421551,
     "lngc": 56.049685462763,
+    "capturePoint": true
+  },
+  "DP10-Tayyibah_FOB": {
+    "latc": 25.393523820414,
+    "lngc": 56.168651574049,
     "capturePoint": true
   },
   "DR16-Gohreh_FOB": {
