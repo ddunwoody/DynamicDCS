@@ -61,9 +61,8 @@ do
 					for i=1,#coaTable.country do
 						local country = coaTable.country[i]
 						for uType,uTable in pairs(country) do
-							if uType == 'helicopter' or uType == 'vehicle' then
-								env.info('TYPE: ' .. uType)
-							--if true then
+							env.info('TYPE: ' .. uType)
+							if uType == 'plane' or uType == 'helicopter' or uType == 'vehicle' then
 								if type(uTable)=='table' and uTable.group then
 									for j=1,#uTable.group do
 										local group = uTable.group[j]
@@ -158,6 +157,50 @@ do
 												}
 											end
 										end
+										if gName and group.units and string.find(gName, '|AICAP|', 1, true) then
+											local nArry = gName:split("|")
+											local sourceName = nArry[3]
+											if polyArray[sourceName] == nil then
+												polyArray[sourceName] = {["AICapTemplate"] = {}}
+											end
+											if polyArray[sourceName].AICapTemplate == nil then
+												polyArray[sourceName].AICapTemplate = {
+													["sourceBase"] = sourceName,
+													["units"] = {}
+												}
+											end
+
+											-- env.info('poly3: '..polyArray[convoyBaseName])
+											-- tprint(group, 1)
+											for pIndex = 1, #group.units do
+												local lat, lon, alt = coord.LOtoLL({x = group.units[pIndex].x, y = 0, z = group.units[pIndex].y})
+												polyArray[sourceName].AICapTemplate.units[pIndex] = {
+													["lonLat"] = {
+														[1] = lon,
+														[2] = lat
+													},
+													["type"] = group.units[pIndex].type,
+													["parking"] = group.units[pIndex].parking,
+													["parking_id"] = group.units[pIndex].parking_id,
+												}
+											end
+										end
+										if gName and group.units and string.find(gName, '|DEFAULTS|', 1, true) then
+											env.info("groupName: "..gName)
+											local nArry = gName:split("|")
+											local sourceName = nArry[3]
+											if polyArray[sourceName] == nil then
+												polyArray[sourceName] = {["defaults"] = {}}
+											end
+											if polyArray[sourceName].defaults == nil then
+												polyArray[sourceName].defaults = {
+													["sourceBase"] = sourceName,
+													["baseType"] = nArry[4],
+													["defaultStartSide"] = nArry[5],
+													["enabled"] = nArry[6]
+												}
+											end
+										end
 									end
 								end
 							end
@@ -187,12 +230,12 @@ do
 			local hdg = math.floor(heading / math.pi * 180);
 			local baseName = airbases[airbaseIndex]:getName()
 			env.info('BASENAME: '..baseName..' : '..baseId..' : '..lat..' : '..lon..' : '..hdg)
+			--tprint(polyArray[baseName], 1)
 			local curObj = {
 				["_id"] = baseName,
 				["baseId"] = baseId,
 				["name"] = baseName,
 				["hdg"] = hdg,
-				--["side"] = coalition,
 				["side"] = 0,
 				["initSide"] = coalition,
 				["centerLoc"] = {
@@ -201,16 +244,29 @@ do
 				},
 				["polygonLoc"] = {},
 				["alt"] = alt,
-				["baseType"] = 'MOB'
+				["enabled"] = false
 			}
 			if polyArray[baseName] ~= nil then
-				curObj["polygonLoc"] = polyArray[baseName]
+				local curPoly = polyArray[baseName]
+				curObj["polygonLoc"] = curPoly
+				if curPoly.defaults ~= nil then
+					env.info('1')
+					if curPoly.defaults.baseType ~= nil then
+						curObj["baseType"] = curPoly.defaults.baseType
+					end
+					env.info('2')
+					if curPoly.defaults.defaultStartSide ~= nil then
+						curObj["defaultStartSide"] = curPoly.defaults.defaultStartSide
+					end
+					env.info('3')
+					if curPoly.defaults.enabled then
+						curObj["enabled"] = curPoly.defaults.enabled
+					end
+					env.info('4')
+				end
+				env.info('MADE IT')
+				tprint(curObj, 1)
 			end
-			env.info('RUN1')
-			if string.find(baseName, 'FOB', 1, true) then
-				curObj.baseType = 'FOB'
-			end
-			env.info('RUN2')
 			table.insert(updateQue.que, {
 				action = 'airbaseC',
 				data = curObj
