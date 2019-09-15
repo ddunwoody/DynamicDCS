@@ -30,9 +30,6 @@ const ServerSchema = new Schema({
 		secsBwtTicks: {
 			type: Number
 		},
-		defBaseSides: {
-			type: Object
-		},
 		replenThresholdFARP: {
 			type: Number
 		},
@@ -94,10 +91,6 @@ const ServerSchema = new Schema({
 			type: Boolean,
 			default: true
 		},
-		mapRotation: {
-			type: Array,
-			required: true
-		},
 		SRSFilePath: {
 			type: String,
 			required: true,
@@ -107,9 +100,14 @@ const ServerSchema = new Schema({
 			type: Boolean,
 			default: false
 		},
-        weaponRules: {
-            type: Array,
-            required: true,
+    weaponRules: {
+    	type: Array,
+      required: true,
+			default: []
+		},
+		pveAIConfig: {
+			type: Array,
+			required: true,
 			default: []
 		},
 		curTimer: {

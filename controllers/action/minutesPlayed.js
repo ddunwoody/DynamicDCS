@@ -6,9 +6,6 @@ const	_ = require('lodash');
 const masterDBController = require('../db/masterDB');
 const constants = require('../constants');
 
-//move to db eventually
-var ratioToSendConvoys = 1.25; //:1
-
 _.assign(exports, {
 	checkCurrentPlayerBalance: (serverName) => {
 		// set to 2:1 or worse
@@ -17,14 +14,28 @@ _.assign(exports, {
 				let sideState = 0;
 				let totalCampaignTime = new Date(_.get(latestCampaign, 'updatedAt')).getTime() - new Date(_.get(latestCampaign, 'createdAt')).getTime();
 				// console.log('tct: ', totalCampaignTime);
-				if (totalCampaignTime > _.get(constants, 'time.oneHour')) {
+				// if (totalCampaignTime > _.get(constants, 'time.oneHour')) {
+				if (totalCampaignTime > 0) {
 					console.log('STACK: Blue:', latestCampaign.totalMinutesPlayed_blue, ' Red:', latestCampaign.totalMinutesPlayed_red);
 					if (_.get(latestCampaign, 'name')) {
-						if((latestCampaign.totalMinutesPlayed_blue/latestCampaign.totalMinutesPlayed_red) >= ratioToSendConvoys) {
-							sideState = 1;
-						}
-						if((latestCampaign.totalMinutesPlayed_red/latestCampaign.totalMinutesPlayed_blue) >= ratioToSendConvoys) {
-							sideState = 2;
+						var redUnderdog = latestCampaign.totalMinutesPlayed_blue/latestCampaign.totalMinutesPlayed_red;
+						var blueUnderdog = latestCampaign.totalMinutesPlayed_red/latestCampaign.totalMinutesPlayed_blue;
+
+						if(redUnderdog > 1 && isFinite(redUnderdog)) {
+							sideState = {
+								underdog: 1,
+								ratio: redUnderdog
+							};
+						}else if(blueUnderdog > 1 && isFinite(blueUnderdog)) {
+							sideState = {
+								underdog: 2,
+								ratio: blueUnderdog
+							};
+						} else {
+							sideState = {
+								underdog: 0,
+								ratio: 1
+							};
 						}
 					}
 				}

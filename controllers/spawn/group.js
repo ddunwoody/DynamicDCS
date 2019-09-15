@@ -477,6 +477,140 @@ _.set(exports, 'atkHeliRouteTemplate', function (routes) {
 		;
 });
 
+_.set(exports, 'capPlaneDefenseRouteTemplate', function (routes) {
+	return '' +
+		'["route"] = {' +
+			'["routeRelativeTOT"] = true,' +
+			'["points"] = {' +
+				'[1] = {' +
+					'["action"] = "From Parking Area",' +
+					'["alt_type"] = "BARO",' +
+					'["task"] = {' +
+						'["id"] = "ComboTask",' +
+						'["params"] = {' +
+							'["tasks"] = {' +
+								'[1] = {' +
+									'["enabled"] = true,' +
+									'["auto"] = true,' +
+									'["id"] = "EngageTargets",' +
+									'["number"] = 1,' +
+									'["key"] = "CAP",' +
+									'["params"] = {' +
+										'["targetTypes"] = {' +
+											'[1] = "Air",' +
+										'},' +
+										'["priority"] = 0,' +
+									'},' +
+								'},' +
+							'},' +
+						'},' +
+					'},' +
+					'["type"] = "TakeOffParking",' +
+					'["ETA"] = 0,' +
+					'["ETA_locked"] = true,' +
+					'["x"] = coord.LLtoLO(' + _.get(routes, ['routeLocs', 1]) + ', ' + _.get(routes, ['routeLocs', 0]) + ').x, ' +
+					'["y"] = coord.LLtoLO(' + _.get(routes, ['routeLocs', 1]) + ', ' + _.get(routes, ['routeLocs', 0]) + ').z, ' +
+					'["formation_template"] = "",' +
+					'["airdromeId"] = ' + _.get(routes, 'baseId') + ',' +
+				'},' +
+				'[2] = {' +
+					'["alt"] = 3048,' +
+					'["action"] = "Turning Point",' +
+					'["alt_type"] = "BARO",' +
+					'["speed"] = 256.94444444444,' +
+					'["task"] = {' +
+						'["id"] = "ComboTask",' +
+						'["params"] = {' +
+							'["tasks"] = {' +
+								'[1] = {' +
+									'["enabled"] = true,' +
+									'["auto"] = false,' +
+									'["id"] = "Orbit",' +
+									'["number"] = 1,' +
+									'["params"] = {' +
+										'["altitude"] = 3048,' +
+										'["pattern"] = "Circle",' +
+										'["speed"] = 179.86111111111,' +
+										'["speedEdited"] = true,' +
+									'},' +
+								'},' +
+							'},' +
+						'},' +
+					'},' +
+					'["type"] = "Turning Point",' +
+					'["x"] = coord.LLtoLO(' + _.get(routes, ['routeLocs', 1]) + ', ' + _.get(routes, ['routeLocs', 0]) + ').x, ' +
+					'["y"] = coord.LLtoLO(' + _.get(routes, ['routeLocs', 1]) + ', ' + _.get(routes, ['routeLocs', 0]) + ').z, ' +
+					'["formation_template"] = "",' +
+				'},' +
+			'},' +
+		'},';
+});
+
+_.set(exports, 'capHeliDefenseRouteTemplate', function (routes) {
+	return '' +
+	'["route"] = {' +
+		'["points"] = {' +
+			'[1] = {' +
+				'["action"] = "From Ground Area",' +
+				'["alt_type"] = "BARO",' +
+				// '["helipadId"] = StaticObject.getByName(' + _.get(routes, 'baseName') + ').getID(),' +
+				'["task"] = {' +
+					'["id"] = "ComboTask",' +
+					'["params"] = {' +
+						'["tasks"] = {' +
+							'[1] = {' +
+								'["enabled"] = true,' +
+								'["key"] = "CAS",' +
+								'["id"] = "EngageTargets",' +
+								'["number"] = 1,' +
+								'["auto"] = true,' +
+								'["params"] = {' +
+									'["targetTypes"] = {' +
+										'[1] = "Helicopters",' +
+										'[2] = "Ground Units",' +
+										'[3] = "Light armed ships",' +
+									'},' +
+									'["priority"] = 0,' +
+								'},' +
+							'},' +
+						'},' +
+					'},' +
+				'},' +
+				'["type"] = "TakeOffGround",' +
+				'["x"] = coord.LLtoLO(' + _.get(routes, ['routeLocs', 1]) + ', ' + _.get(routes, ['routeLocs', 0]) + ').x, ' +
+				'["y"] = coord.LLtoLO(' + _.get(routes, ['routeLocs', 1]) + ', ' + _.get(routes, ['routeLocs', 0]) + ').z, ' +
+			'},' +
+			'[2] = {' +
+				'["alt"] = 304.8,' +
+				'["action"] = "Turning Point",' +
+				'["alt_type"] = "BARO",' +
+				'["speed"] = 41.666666666667,' +
+				'["task"] = {' +
+					'["id"] = "ComboTask",' +
+					'["params"] = {' +
+						'["tasks"] = {' +
+							'[1] = {' +
+								'["enabled"] = true,' +
+								'["auto"] = false,' +
+								'["id"] = "Orbit",' +
+								'["number"] = 1,' +
+								'["params"] = {' +
+									'["altitude"] = 304.8,' +
+									'["pattern"] = "Circle",' +
+									'["speed"] = 40.277777777778,' +
+								'},' +
+							'},' +
+						'},' +
+					'},' +
+				'},' +
+				'["type"] = "Turning Point",' +
+				'["x"] = coord.LLtoLO(' + _.get(routes, ['routeLocs', 1]) + ', ' + _.get(routes, ['routeLocs', 0]) + ').x, ' +
+				'["y"] = coord.LLtoLO(' + _.get(routes, ['routeLocs', 1]) + ', ' + _.get(routes, ['routeLocs', 0]) + ').z, ' +
+			'},' +
+		'},' +
+	'},';
+});
+
 _.set(exports, 'bombersPlaneRouteTemplate', function (routes) {
 	return '' +
 		'["route"] = {' +
@@ -1179,6 +1313,104 @@ _.set(exports, 'su24mTemplate', function ( unitObj ) {
 	return curAirTemplate;
 });
 
+_.set(exports, 'capPlaneDefenseTemplate', function ( unitObj ) {
+	var curAirTemplate = '{' +
+		'["x"] = coord.LLtoLO(' + _.get(unitObj, ['routeLocs', 1]) + ', ' +  _.get(unitObj, ['routeLocs', 0]) + ').x, ' +
+		'["y"] = coord.LLtoLO(' + _.get(unitObj, ['routeLocs', 1]) + ', ' +  _.get(unitObj, ['routeLocs', 0]) + ').z, ' +
+		'["type"] = "' + _.get(unitObj, 'type') + '",' +
+		'["name"] = "' + _.get(unitObj, 'name') + '",' +
+		'["parking_id"] = "' + _.get(unitObj, 'parking_id') + '",' +
+		'["parking"] = "' + _.get(unitObj, 'parking') + '",' +
+		// '["unitId"] = ' + _.get(unitObj, 'unitId') + ',' +
+		'["skill"] = "' + _.get(unitObj, 'skill', "Excellent") + '",' +
+		'["hardpoint_racks"] = true,' +
+		'["payload"]={' +
+			'["pylons"]={' +
+		/*
+				'[1] = {' +
+					'["CLSID"] = "{3C612111-C7AD-476E-8A8E-2485812F4E5C}",' +
+				'},' +
+				'[2] = {' +
+					'["CLSID"] = "{KAB_1500Kr_LOADOUT}",' +
+				'},' +
+				'[3] = {' +
+					'["CLSID"] = "{E2C426E3-8B10-4E09-B733-9CDC26520F48}",' +
+				'},' +
+				'[4] = {' +
+					'["CLSID"] = "{KAB_1500Kr_LOADOUT}",' +
+				'},' +
+				'[5] = {' +
+					'["CLSID"] = "{3C612111-C7AD-476E-8A8E-2485812F4E5C}",' +
+				'},' +
+				'[6] = {' +
+					'["CLSID"] = "{E2C426E3-8B10-4E09-B733-9CDC26520F48}",' +
+				'},' +
+				'[7] = {' +
+					'["CLSID"] = "{KAB_1500Kr_LOADOUT}",' +
+				'},' +
+				'[8] = {' +
+					'["CLSID"] = "{3C612111-C7AD-476E-8A8E-2485812F4E5C}",' +
+				'},' +
+		 */
+			'},' +
+			'["fuel"] = "11700",' +
+			'["flare"] = 96,' +
+			'["chaff"] = 96,' +
+			'["gun"] = 100,' +
+		'},' +
+	'},';
+
+	return curAirTemplate;
+});
+
+_.set(exports, 'capHeliDefenseTemplate', function ( unitObj ) {
+	return '{' +
+		'["x"] = coord.LLtoLO(' + _.get(unitObj, ['routeLocs', 1]) + ', ' +  _.get(unitObj, ['routeLocs', 0]) + ').x, ' +
+		'["y"] = coord.LLtoLO(' + _.get(unitObj, ['routeLocs', 1]) + ', ' +  _.get(unitObj, ['routeLocs', 0]) + ').z, ' +
+		'["type"] = "' + _.get(unitObj, 'type') + '",' +
+		'["name"] = "' + _.get(unitObj, 'name') + '",' +
+		'["parking_id"] = "' + _.get(unitObj, 'parking_id') + '",' +
+		'["parking"] = "' + _.get(unitObj, 'parking') + '",' +
+		// '["unitId"] = ' + _.get(unitObj, 'unitId') + ',' +
+		'["skill"] = "' + _.get(unitObj, 'skill', "Excellent") + '",' +
+		'["hardpoint_racks"] = true,' +
+		'["payload"]={' +
+		'["pylons"]={' +
+		/*
+				'[1] = {' +
+					'["CLSID"] = "{3C612111-C7AD-476E-8A8E-2485812F4E5C}",' +
+				'},' +
+				'[2] = {' +
+					'["CLSID"] = "{KAB_1500Kr_LOADOUT}",' +
+				'},' +
+				'[3] = {' +
+					'["CLSID"] = "{E2C426E3-8B10-4E09-B733-9CDC26520F48}",' +
+				'},' +
+				'[4] = {' +
+					'["CLSID"] = "{KAB_1500Kr_LOADOUT}",' +
+				'},' +
+				'[5] = {' +
+					'["CLSID"] = "{3C612111-C7AD-476E-8A8E-2485812F4E5C}",' +
+				'},' +
+				'[6] = {' +
+					'["CLSID"] = "{E2C426E3-8B10-4E09-B733-9CDC26520F48}",' +
+				'},' +
+				'[7] = {' +
+					'["CLSID"] = "{KAB_1500Kr_LOADOUT}",' +
+				'},' +
+				'[8] = {' +
+					'["CLSID"] = "{3C612111-C7AD-476E-8A8E-2485812F4E5C}",' +
+				'},' +
+		 */
+		'},' +
+		'["fuel"] = "11700",' +
+		'["flare"] = 96,' +
+		'["chaff"] = 96,' +
+		'["gun"] = 100,' +
+		'},' +
+		'},';
+});
+
 _.set(exports, 'airUnitTemplate', function ( unitObj ) {
 	// console.log('cOBJ: ', unitObj);
 	var curAirTemplate = '{' +
@@ -1585,94 +1817,24 @@ _.set(exports, 'spawnLayer2Reinforcements', function (serverName, catType, rndAm
 	return _.get(_.compact(groupedL2Units), 'length', 0);
 });
 
-_.set(exports, 'spawnConvoy', function (serverName, groupName, convoySide, baseTemplate, mesg) {
+_.set(exports, 'spawnConvoy', function (serverName, groupName, convoySide, baseTemplate, AIConfig, mesg) {
+	var convoyMakeup = [];
+	var curUnit;
+	_.forEach(AIConfig.makeup, function (units) {
+		curUnit = _.first(exports.getRndFromSpawnCat(serverName, units.template, convoySide, false, true));
+		_.assign(curUnit, {
+			country: _.get(constants, ['defCountrys', convoySide]),
+			speed: '55',
+			hidden: false,
+			playerCanDrive: false
+		});
+		for(var x = 0; x < units.count; x++) {
+			_.set(curUnit, 'name', groupName + units.template + '|' + x + '|');
+			convoyMakeup.push(curUnit);
+		}
+	});
 
-	var convoyMakup = {
-		1: [{
-				name: groupName + 'Leclerc|1|',
-				type: 'Leclerc',
-				country: 'AGGRESSORS',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			},
-			{
-				name: groupName + 'Leclerc|2|',
-				type: 'Leclerc',
-				country: 'AGGRESSORS',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			},
-			{
-				name: groupName + 'BMP-3|1|',
-				type: 'BMP-3',
-				country: 'AGGRESSORS',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			},
-			{
-				name: groupName + '2S6 Tunguska|1|',
-				type: '2S6 Tunguska',
-				country: 'AGGRESSORS',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			},
-			{
-				name: groupName + '2S6 Tunguska|2|',
-				type: '2S6 Tunguska',
-				country: 'AGGRESSORS',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			}
-		],
-		2: [{
-				name: groupName + 'M-1 Abrams|1|',
-				type: 'M-1 Abrams',
-				country: 'USA',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			},
-			{
-				name: groupName + 'M-1 Abrams|2|',
-				type: 'M-1 Abrams',
-				country: 'USA',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			},
-			{
-				name: groupName + 'M1128 Stryker MGS|1|',
-				type: 'M1128 Stryker MGS',
-				country: 'USA',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			},
-			{
-				name: groupName + 'M6 Linebacker|1|',
-				type: 'M6 Linebacker',
-				country: 'USA',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			},
-			{
-				name: groupName + 'M6 Linebacker|2|',
-				type: 'M6 Linebacker',
-				country: 'USA',
-				speed: '55',
-				hidden: false,
-				playerCanDrive: false
-			}
-		]
-	};
-
-	var curConvoyMakeup = _.get(convoyMakup, [convoySide]);
+	var curConvoyMakeup = convoyMakeup;
 	var groupArray = [];
 	var curGrpObj = {};
 	var curGroupSpawn;
@@ -1721,6 +1883,70 @@ _.set(exports, 'spawnConvoy', function (serverName, groupName, convoySide, baseT
 		})
 		.catch(function (err) {
 			console.log('erroring line1783: ', err);
+		})
+	;
+});
+
+_.set(exports, 'spawnCAPDefense', function (serverName, groupName, convoySide, baseTemplate, AIConfig, mesg) {
+	var curUnit;
+	var capMakeup;
+	var curUnitSpawn;
+	var curGroupSpawn;
+	// console.log('SCD: ', groupName, baseTemplate);
+
+	for(var x=0; x < AIConfig.makeup.length; x++) {
+		var curUnitTemp = _.get(AIConfig, ['makeup', x]);
+		var curCapTemp;
+		var curCountry = _.get(constants, ['defCountrys', convoySide]);
+		//grab template from first unit
+		var aircraftTemplateType = _.get(baseTemplate, ['polygonLoc', 'AICapTemplate', 'units', 0, 'type']);
+		var spawnTemplateName = _.get(curUnitTemp, ['template', aircraftTemplateType]);
+
+		capMakeup = [];
+		curUnitSpawn = '';
+		curUnit = _.cloneDeep(_.first(exports.getRndFromSpawnCat(serverName, spawnTemplateName, convoySide, false, true)));
+		_.set(curUnit, 'groupName', groupName);
+		_.set(curUnit, 'baseName', baseTemplate.name);
+		_.set(curUnit, 'country', curCountry);
+		_.set(curUnit, 'baseId', baseTemplate.baseId);
+		_.set(curUnit, 'hidden', false);
+		for (var y = 0; y < curUnitTemp.count; y++) {
+			curCapTemp = _.get(baseTemplate, ['polygonLoc', 'AICapTemplate', 'units', y]);
+			_.set(curUnit, 'routeLocs', curCapTemp.lonLat);
+			_.set(curUnit, 'parking_id', curCapTemp.parking_id);
+			_.set(curUnit, 'parking', curCapTemp.parking);
+			_.set(curUnit, 'name', groupName + spawnTemplateName + '|' + y + '|');
+			if (curCapTemp.type === 'F-15C') {
+				curUnitSpawn += exports.capPlaneDefenseTemplate(curUnit);
+			}
+			if (curCapTemp.type === 'AH-1W') {
+				curUnitSpawn += exports.capHeliDefenseTemplate(curUnit);
+			}
+		}
+		if (curCapTemp.type === 'F-15C') {
+			curGroupSpawn = exports.grndUnitGroup(curUnit, 'CAP', exports.capPlaneDefenseRouteTemplate(curUnit));
+		}
+		if (curCapTemp.type === 'AH-1W') {
+			curGroupSpawn = exports.grndUnitGroup(curUnit, 'CAS', exports.capHeliDefenseRouteTemplate(curUnit));
+		}
+	}
+
+	curGroupSpawn = _.replace(curGroupSpawn, "#UNITS", curUnitSpawn);
+	console.log('theWholeThing: ', curGroupSpawn);
+	var curCMD = exports.spawnGrp(curGroupSpawn, curCountry, curUnit.category);
+	var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
+	var actionObj = {actionObj: sendClient, queName: 'clientArray'};
+	masterDBController.cmdQueActions('save', serverName, actionObj)
+		.then(function () {
+			DCSLuaCommands.sendMesgToCoalition(
+				convoySide,
+				serverName,
+				mesg,
+				20
+			);
+		})
+		.catch(function (err) {
+			console.log('erroring line1791: ', err);
 		})
 	;
 });

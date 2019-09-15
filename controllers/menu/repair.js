@@ -73,27 +73,29 @@ _.assign(exports, {
 							var curSAMTemplate = _.first(group);
 							var tNameArry = _.split(curSAMTemplate, '|');
 							//add missing units to existing array
-							console.log('repairStarSam: ', tNameArry, _.get(tNameArry, [2]));
-							groupController.spawnStarSam(
-								serverName,
-								_.get(curSAMTemplate, 'coalition'),
-								_.get(tNameArry, [1]),
-								_.get(tNameArry, [2]).charAt(0),
-								launcher,
-								_.first(unitsMissing),
-								_.get(curSAMTemplate, 'lonLatLoc'),
-							);
-							console.log('TRUCKHERE? ', unitsMissing);
-							_.forEach(group, function (removeElement) {
-								groupController.destroyUnit(serverName, _.get(removeElement, 'name'));
-							});
+							if (tNameArry.length > 1) {
+								console.log('repairStarSam: ', tNameArry, _.get(tNameArry, [2]));
+								groupController.spawnStarSam(
+									serverName,
+									_.get(curSAMTemplate, 'coalition'),
+									_.get(tNameArry, [1]),
+									_.get(tNameArry, [2]).charAt(0),
+									launcher,
+									_.first(unitsMissing),
+									_.get(curSAMTemplate, 'lonLatLoc'),
+								);
+								console.log('TRUCKHERE? ', unitsMissing);
+								_.forEach(group, function (removeElement) {
+									groupController.destroyUnit(serverName, _.get(removeElement, 'name'));
+								});
+							}
 							resolve(true);
 						}
 					});
 				})
 				.catch(function (err) {
 					reject(err);
-					console.log('line 125: ', err);
+					console.log('line 96: ', err);
 				})
 			;
 		});

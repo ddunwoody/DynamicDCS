@@ -7,7 +7,7 @@ const aiConvoysController = require('../action/aiConvoys');
 
 _.set(exports, 'processOneHourActions', function (serverName, fullySynced) {
 	if (fullySynced) {
-		aiConvoysController.checkForServerImbalance(serverName)
+		aiConvoysController.maintainPvEConfig(serverName)
 			.catch(function (err) {
 				console.log('err line16: ', err);
 			})
