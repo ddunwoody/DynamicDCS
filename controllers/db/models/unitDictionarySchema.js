@@ -79,8 +79,10 @@ const UnitDictionarySchema = new Schema({
 		spoke: {
 			type: Boolean,
 			default: false
-		}
-
+		},
+		payload: {
+			type: String
+		},
 	},
 	{
 		timestamps: true, // Saves createdAt and updatedAt as dates. createdAt will be our timestamp.
