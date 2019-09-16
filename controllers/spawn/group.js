@@ -551,8 +551,10 @@ _.set(exports, 'capHeliDefenseRouteTemplate', function (routes) {
 	'["route"] = {' +
 		'["points"] = {' +
 			'[1] = {' +
+				'["alt"] = 30.48,' +
+				'["alt_type"] = "RADIO",' +
+				'["speed"] = 55.555555555556,' +
 				'["action"] = "From Ground Area",' +
-				'["alt_type"] = "BARO",' +
 				// '["helipadId"] = StaticObject.getByName(' + _.get(routes, 'baseName') + ').getID(),' +
 				'["task"] = {' +
 					'["id"] = "ComboTask",' +
@@ -573,6 +575,36 @@ _.set(exports, 'capHeliDefenseRouteTemplate', function (routes) {
 									'["priority"] = 0,' +
 								'},' +
 							'},' +
+							'[1] = {' +
+								'["number"] = 1,' +
+								'["auto"] = false,' +
+								'["id"] = "WrappedAction",' +
+								'["enabled"] = true,' +
+								'["params"] = {' +
+									'["action"] = {' +
+										'["id"] = "Option",' +
+										'["params"] = {' +
+											'["value"]=2,' +
+											'["name"]=1,' +
+										'},' +
+									'},' +
+								'},' +
+							'},' +
+							'[2] = {' +
+								'["number"] = 2,' +
+								'["auto"] = false,' +
+								'["id"] = "WrappedAction",' +
+								'["enabled"] = true,' +
+								'["params"] = {' +
+									'["action"] = {' +
+										'["id"] = "Option",' +
+										'["params"] = {' +
+											'["value"]=0,' +
+											'["name"]=0,' +
+										'},' +
+									'},' +
+								'},' +
+							'},' +
 						'},' +
 					'},' +
 				'},' +
@@ -583,8 +615,9 @@ _.set(exports, 'capHeliDefenseRouteTemplate', function (routes) {
 			'[2] = {' +
 				'["alt"] = 304.8,' +
 				'["action"] = "Turning Point",' +
-				'["alt_type"] = "BARO",' +
+				'["alt_type"] = "RADIO",' +
 				'["speed"] = 41.666666666667,' +
+				'["action"] = "Turning Point",' +
 				'["task"] = {' +
 					'["id"] = "ComboTask",' +
 					'["params"] = {' +
@@ -1901,6 +1934,7 @@ _.set(exports, 'spawnCAPDefense', function (serverName, groupName, convoySide, b
 		//grab template from first unit
 		var aircraftTemplateType = _.get(baseTemplate, ['polygonLoc', 'AICapTemplate', 'units', 0, 'type']);
 		var spawnTemplateName = _.get(curUnitTemp, ['template', aircraftTemplateType]);
+		var curAngle = 0;
 
 		capMakeup = [];
 		curUnitSpawn = '';
@@ -1912,16 +1946,19 @@ _.set(exports, 'spawnCAPDefense', function (serverName, groupName, convoySide, b
 		_.set(curUnit, 'hidden', false);
 		for (var y = 0; y < curUnitTemp.count; y++) {
 			curCapTemp = _.get(baseTemplate, ['polygonLoc', 'AICapTemplate', 'units', y]);
-			_.set(curUnit, 'routeLocs', curCapTemp.lonLat);
 			_.set(curUnit, 'parking_id', curCapTemp.parking_id);
 			_.set(curUnit, 'parking', curCapTemp.parking);
 			_.set(curUnit, 'name', groupName + spawnTemplateName + '|' + y + '|');
 			if (curCapTemp.type === 'F-15C') {
+				_.set(curUnit, 'routeLocs', curCapTemp.lonLat);
 				curUnitSpawn += exports.capPlaneDefenseTemplate(curUnit);
 			}
 			if (curCapTemp.type === 'AH-1W') {
+				_.set(curUnit, 'routeLocs', zoneController.getLonLatFromDistanceDirection(curCapTemp.lonLat, curAngle, 0.15));
+				curAngle += 180;
 				curUnitSpawn += exports.capHeliDefenseTemplate(curUnit);
 			}
+
 		}
 		if (curCapTemp.type === 'F-15C') {
 			curGroupSpawn = exports.grndUnitGroup(curUnit, 'CAP', exports.capPlaneDefenseRouteTemplate(curUnit));
