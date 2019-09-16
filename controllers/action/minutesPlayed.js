@@ -18,6 +18,8 @@ _.assign(exports, {
 				if (totalCampaignTime > 0) {
 					console.log('STACK: Blue:', latestCampaign.totalMinutesPlayed_blue, ' Red:', latestCampaign.totalMinutesPlayed_red);
 					if (_.get(latestCampaign, 'name')) {
+						if (latestCampaign.totalMinutesPlayed_blue === 0){latestCampaign.totalMinutesPlayed_blue = 1}
+						if (latestCampaign.totalMinutesPlayed_red === 0){latestCampaign.totalMinutesPlayed_red = 1}
 						var redUnderdog = latestCampaign.totalMinutesPlayed_blue/latestCampaign.totalMinutesPlayed_red;
 						var blueUnderdog = latestCampaign.totalMinutesPlayed_red/latestCampaign.totalMinutesPlayed_blue;
 
