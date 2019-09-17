@@ -189,6 +189,7 @@ _.assign(exports, {
 		fourMins: 4 * 60 * 1000,
 		oneHour: 60 * 60 * 1000,
 		oneMin: 60 * 1000,
+		thirtyMinutes: 30 * 60 * 1000,
 		thirtySecs: 30 * 1000,
 		tenMinutes: 10 * 60 * 1000
 	},

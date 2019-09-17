@@ -18,12 +18,6 @@ var maxCrateLife = (3 * 60 * 60 * 1000); // 3 hrs
 _.set(exports, 'processThirtySecActions', function (serverName, fullySynced) {
 	if (fullySynced) {
 
-		aiConvoysController.maintainPvEConfig(serverName)
-			.catch(function (err) {
-				console.log('err line16: ', err);
-			})
-		;
-
 		masterDBController.unitActions('removeAllDead', serverName, {})
 			.catch(function (err) {
 				console.log('err line12: ', err);

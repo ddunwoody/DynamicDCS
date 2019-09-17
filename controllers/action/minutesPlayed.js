@@ -14,8 +14,8 @@ _.assign(exports, {
 				let sideState = 0;
 				let totalCampaignTime = new Date(_.get(latestCampaign, 'updatedAt')).getTime() - new Date(_.get(latestCampaign, 'createdAt')).getTime();
 				// console.log('tct: ', totalCampaignTime);
-				// if (totalCampaignTime > _.get(constants, 'time.oneHour')) {
-				if (totalCampaignTime > 0) {
+				if (totalCampaignTime > _.get(constants, 'time.oneHour')) {
+				// if (totalCampaignTime > 0) {
 					console.log('STACK: Blue:', latestCampaign.totalMinutesPlayed_blue, ' Red:', latestCampaign.totalMinutesPlayed_red);
 					if (_.get(latestCampaign, 'name')) {
 						if (latestCampaign.totalMinutesPlayed_blue === 0){latestCampaign.totalMinutesPlayed_blue = 1}
