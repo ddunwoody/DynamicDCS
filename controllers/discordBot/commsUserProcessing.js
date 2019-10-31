@@ -229,6 +229,7 @@ _.set(dBot, 'kickForOpposingSides', function (playerArray, discordByChannel) {
 
 _.set(exports, 'checkForComms', function (serverName, isDiscordAllowed, playerArray) {
     //console.log('PA: ', playerArray);
+	/* Turn OFf Comms
     var removeServerHost = _.filter(playerArray, function (p) {
         if (p) {
             return p.id != 1;
@@ -236,6 +237,7 @@ _.set(exports, 'checkForComms', function (serverName, isDiscordAllowed, playerAr
         return false;
     });
     dBot.kickForNoComms(serverName, removeServerHost, isDiscordAllowed);
+ */
     /*
     var fiveMinsAgo = new Date().getTime() - (5 * oneMin);
     masterDBController.sessionsActions('readLatest', serverName, {})
