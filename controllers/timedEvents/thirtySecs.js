@@ -24,8 +24,9 @@ _.set(exports, 'processThirtySecActions', function (serverName, fullySynced) {
 			})
 		;
 		resetCampaignController.checkTimeToRestart(serverName);
-
-		userLivesController.checkAircraftCosts(serverName);
+		if(_.get(constants, 'config.lifePointsEnabled')) {
+			userLivesController.checkAircraftCosts(serverName);
+		}
 
 		weaponComplianceController.checkAircraftWeaponCompliance(serverName);
 

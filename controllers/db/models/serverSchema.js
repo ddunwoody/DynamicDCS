@@ -159,6 +159,10 @@ const ServerSchema = new Schema({
 		resetFullCampaign: {
 			type: Boolean,
 			default: false
+		},
+		lifePointsEnabled: {
+			type: Boolean,
+			default: true
 		}
 	},
 	{

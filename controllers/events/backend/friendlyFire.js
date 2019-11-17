@@ -63,16 +63,18 @@ _.set(exports, 'processFriendlyFire', function (serverName, sessionName, eventOb
 												curTUnit = _.first(tunit);
 												// console.log('player: ', iPlayer, tPlayer);
 												//removeLifePoints: function (serverName, curPlayer, curUnit, execAction, isDirect, removeLP)
-												userLivesController.removeLifePoints(
-													serverName,
-													curIPlayer,
-													curIUnit,
-													'Friendly Kill',
-													true,
-													6
-												);
+												if(_.get(constants, 'config.lifePointsEnabled')){
+													userLivesController.removeLifePoints(
+														serverName,
+														curIPlayer,
+														curIUnit,
+														'Friendly Kill',
+														true,
+														6
+													);
+												}
 
-												if (curTUnit.inAir) {
+												if (curTUnit.inAir && _.get(constants, 'config.lifePointsEnabled')) {
 													userLivesController.addLifePoints(
 														serverName,
 														curTPlayer,

@@ -81,7 +81,7 @@ _.set(exports, 'processEventLand', function (serverName, sessionName, eventObj) 
 											msg: 'C: '+ _.get(curIUnit, 'type') + '(' + _.get(curIUnit, 'playername') + ') has landed at friendly ' + place
 										};
 										console.log('FriendBaseLand: ', _.get(iCurObj, 'msg'));
-										if(_.get(iCurObj, 'iucid')) {
+										if(_.get(iCurObj, 'iucid') && _.get(constants, 'config.lifePointsEnabled')) {
 											userLivesController.addLifePoints(
 												serverName,
 												iPlayer,

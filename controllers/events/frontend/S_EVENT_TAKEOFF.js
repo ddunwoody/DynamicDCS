@@ -59,12 +59,14 @@ _.set(exports, 'processEventTakeoff', function (serverName, sessionName, eventOb
 												curIUnit,
 												'Takeoff');
 											 */
-											userLivesController.removeLifePoints(
-												serverName,
-												iPlayer,
-												curIUnit,
-												'Takeoff'
-											);
+											if (_.get(constants, 'config.lifePointsEnabled')) {
+												userLivesController.removeLifePoints(
+													serverName,
+													iPlayer,
+													curIUnit,
+													'Takeoff'
+												);
+											}
 											webPushCommands.sendToCoalition(serverName, {payload: {action: eventObj.action, data: _.cloneDeep(iCurObj)}});
 											masterDBController.simpleStatEventActions('save', serverName, iCurObj);
 										}

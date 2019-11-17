@@ -8,7 +8,9 @@ const repairController = require('../menu/repair');
 
 _.set(exports, 'processTenMinuteActions', function (serverName, fullySynced) {
 	if (fullySynced) {
-		userLivesController.updateServerLifePoints(serverName);
+		if(_.get(constants, 'config.lifePointsEnabled')) {
+			userLivesController.updateServerLifePoints(serverName);
+		}
 		repairController.repairBaseSAMRadars(serverName);
 	}
 });
