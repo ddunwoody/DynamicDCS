@@ -17,15 +17,20 @@ _.assign(exports, {
 				_.forEach(_.get(constants, 'config.pveAIConfig', []), (pveConfig) => {
 					lockedStack = false;
 					_.forEach(_.get(pveConfig, 'config', []), (AIConfig) => {
-						var sideStackedAgainst = _.get(stackObj, [AIConfig.functionCall], {});
-						//get stats
-						// console.log('mt: ', sideStackedAgainst.ratio, ' >= ', AIConfig.stackTrigger);
-						if(sideStackedAgainst.ratio >= AIConfig.stackTrigger && !lockedStack) {
-							lockedStack = true;
-							// console.log('processing pveAI: ', AIConfig.desc);
-							return exports.processAI(serverName, sideStackedAgainst, AIConfig);
+						if(AIConfig.functionCall === 'fullAIEnabled') {
+							exports.processAI(serverName, {underdog: 1}, AIConfig);
+							exports.processAI(serverName, {underdog: 2}, AIConfig);
 						} else {
-							return true;
+							var sideStackedAgainst = _.get(stackObj, [AIConfig.functionCall], {});
+							//get stats
+							// console.log('mt: ', sideStackedAgainst.ratio, ' >= ', AIConfig.stackTrigger);
+							if(sideStackedAgainst.ratio >= AIConfig.stackTrigger && !lockedStack) {
+								lockedStack = true;
+								// console.log('processing pveAI: ', AIConfig.desc);
+								return exports.processAI(serverName, sideStackedAgainst, AIConfig);
+							} else {
+								return true;
+							}
 						}
 					});
 				});

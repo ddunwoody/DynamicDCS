@@ -174,7 +174,7 @@ do
 											-- tprint(group, 1)
 											for pIndex = 1, #group.units do
 												local lat, lon, alt = coord.LOtoLL({x = group.units[pIndex].x, y = 0, z = group.units[pIndex].y})
-												polyArray[sourceName].AICapTemplate.units[pIndex] = {
+												table.insert(polyArray[sourceName].AICapTemplate.units,{
 													["lonLat"] = {
 														[1] = lon,
 														[2] = lat
@@ -182,7 +182,7 @@ do
 													["type"] = group.units[pIndex].type,
 													["parking"] = group.units[pIndex].parking,
 													["parking_id"] = group.units[pIndex].parking_id,
-												}
+												})
 											end
 										end
 										if gName and group.units and string.find(gName, '|DEFAULTS|', 1, true) then

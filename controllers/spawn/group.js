@@ -1884,6 +1884,8 @@ _.set(exports, 'spawnCAPDefense', function (serverName, groupName, convoySide, b
 		_.set(curUnit, 'hidden', false);
 		for (var y = 0; y < curUnitTemp.count; y++) {
 			curCapTemp = _.get(baseTemplate, ['polygonLoc', 'AICapTemplate', 'units', y]);
+			// console.log('AICAPTEMPLATE: ', baseTemplate.polygonLoc.AICapTemplate.units, y, curCapTemp);
+
 			_.set(curUnit, 'parking_id', curCapTemp.parking_id);
 			_.set(curUnit, 'parking', curCapTemp.parking);
 			_.set(curUnit, 'name', groupName + spawnTemplateName + '|' + y + '|');
@@ -1907,7 +1909,7 @@ _.set(exports, 'spawnCAPDefense', function (serverName, groupName, convoySide, b
 	}
 
 	curGroupSpawn = _.replace(curGroupSpawn, "#UNITS", curUnitSpawn);
-	console.log('theWholeThing: ', curGroupSpawn);
+	// console.log('theWholeThing: ', curGroupSpawn);
 	var curCMD = exports.spawnGrp(curGroupSpawn, curCountry, curUnit.category);
 	var sendClient = {action: "CMD", cmd: [curCMD], reqID: 0};
 	var actionObj = {actionObj: sendClient, queName: 'clientArray'};
