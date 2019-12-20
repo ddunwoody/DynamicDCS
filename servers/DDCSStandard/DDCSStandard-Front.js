@@ -32,6 +32,8 @@ const processTimedFiveSecs = require('../../controllers/timedEvents/fiveSecs');
 const processTimedThirtySecs = require('../../controllers/timedEvents/thirtySecs');
 const processTimedFiveMinutes = require('../../controllers/timedEvents/fiveMinutes');
 const processTimedTenMinutes = require('../../controllers/timedEvents/tenMinutes');
+const processTimedThirtyMinutes = require('../../controllers/timedEvents/thirtyMinutes');
+const processOneHour = require('../../controllers/timedEvents/oneHour');
 
 //config
 var masterServer = '127.0.0.1';
@@ -76,14 +78,18 @@ masterDBController.initDB(serverName, masterServer)
 						masterDBController.sessionsActions('readLatest', serverName, {})
 							.then(function (latestSession) {
 								// console.log('sn: ', serverEpoc, startAbs, curAbs, latestSession.name);
-								if (sessionName !== latestSession.name || _.get(exports, ['curAbsTime'], 0) > curAbs) {
+								console.log('create new session: ', sessionName, ' !== ', _.get(latestSession,'name', ''), ' || ',  _.get(exports, ['curAbsTime'], 0), ' > ', curAbs);
+								if (sessionName !== _.get(latestSession,'name', '') || _.get(exports, ['curAbsTime'], 0) > curAbs) {
 									minutesPlayedController.resetMinutesPlayed(serverName);
 									masterDBController.campaignsActions('readLatest', serverName, {})
 										.then(function (campaign) {
+											// console.log('CAMP: ', campaign);
 											if (campaign) {
 												_.set(newSession, 'campaignName', campaign.name);
-												masterDBController.sessionsActions('save', serverName, newSession)
-													.then(function() {
+												// console.log('SESS: ', newSession);
+												masterDBController.sessionsActions('update', serverName, newSession)
+													.then(function(newSessionName) {
+														console.log('SESSNAME: ', newSession, newSessionName);
 														_.set(exports, 'sessionName', sessionName)
 													})
 													.catch(function (err) {
@@ -125,8 +131,10 @@ masterDBController.initDB(serverName, masterServer)
 						console.log('SYNC: ', sychrontronController.isServerSynced);
 					}
 					// console.log('CB: ', !_.get(exports, 'sessionName'));
+					// console.log('ISS: ', sychrontronController.isServerSynced, exports.sessionName);
 					_.set(exports, 'curServerUnitCnt', cbArray.unitCount);
 					if(!_.get(exports, 'sessionName')) {
+						console.log('getLatestSession: ');
 						exports.getLatestSession(serverName, cbArray.epoc, cbArray.startAbsTime,  cbArray.curAbsTime);
 					} else {
 						_.forEach(_.get(cbArray, 'que', []), function (queObj) {
@@ -252,6 +260,18 @@ masterDBController.initDB(serverName, masterServer)
 						processTimedTenMinutes.processTenMinuteActions(serverName, sychrontronController.isServerSynced);
 					}
 				}, _.get(constants, 'time.tenMinutes'));
+
+				setInterval(function () {
+					if (!_.get(exports, ['DCSSocket', 'connOpen'], true)) {
+						processTimedThirtyMinutes.processThirtyMinuteActions(serverName, sychrontronController.isServerSynced);
+					}
+				}, _.get(constants, 'time.thirtyMinutes'));
+
+				setInterval(function () {
+					if (!_.get(exports, ['DCSSocket', 'connOpen'], true)) {
+						processTimedThirtyMinutes.processOneHour(serverName, sychrontronController.isServerSynced);
+					}
+				}, _.get(constants, 'time.oneHour'));
 
 				setInterval(function () {
 					if (constants.bases) {
