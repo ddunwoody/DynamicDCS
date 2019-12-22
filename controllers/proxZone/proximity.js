@@ -25,37 +25,117 @@ _.assign(exports, {
 		};
 		masterDBController.baseActions('read', serverName, {baseType: "MOB"})
 			.then(function (bases) {
-				_.forEach(bases, function (base) {
-					_.set(campaignState, [_.get(constants, ['side', base.side])], _.get(campaignState, [_.get(constants, ['side', base.side])]) + 1);
-					promiseBaseSideCount.push(exports.getGroundUnitsInProximity(serverName, base.centerLoc, 3, true)
-						.then(function (unitsInRange) {
-							sideArray = _.transform(unitsInRange, function (result, value) {
-								(result[value.coalition] || (result[value.coalition] = [])).push(value);
-							}, {});
-							if (base.side === 1 && _.get(sideArray, [2], []).length > 0) {
-								// console.log('enemy in range: ', base.name + ': enemy Blue');
-								if (_.get(sideArray, [1], []).length === 0) {
-									console.log('BASE HAS BEEN CAPTURED: ', base.name, ' is now ', 2);
-									var msg = base.name + " HAS BEEN CAPTURED BY BLUE";
+				if (bases.length > 0) {
+					_.forEach(bases, function (base) {
+						_.set(campaignState, [_.get(constants, ['side', base.side])], _.get(campaignState, [_.get(constants, ['side', base.side])]) + 1);
+						promiseBaseSideCount.push(exports.getGroundUnitsInProximity(serverName, base.centerLoc, 3, true)
+							.then(function (unitsInRange) {
+								sideArray = _.transform(unitsInRange, function (result, value) {
+									(result[value.coalition] || (result[value.coalition] = [])).push(value);
+								}, {});
+								if (base.side === 1 && _.get(sideArray, [2], []).length > 0) {
+									// console.log('enemy in range: ', base.name + ': enemy Blue');
+									if (_.get(sideArray, [1], []).length === 0) {
+										console.log('BASE HAS BEEN CAPTURED: ', base.name, ' is now ', 2);
+										var msg = base.name + " HAS BEEN CAPTURED BY BLUE";
+										DCSLuaCommands.sendMesgToAll(
+											serverName,
+											msg,
+											60
+										);
+										// console.log('Spawning Support Units', base, 2);
+										groupController.spawnSupportBaseGrp(serverName, base.name, 2, false);
+										masterDBController.baseActions('updateSide', serverName, {name: base.name, side: 2})
+											.then(function () {
+												baseSpawnFlagsController.setbaseSides(serverName);
+											})
+											.catch(function (err) {
+												console.log('erroring line162: ', err);
+											})
+										;
+										masterDBController.unitActions('read', serverName, {name: base.name + ' Logistics', dead: false})
+											.then(function (aliveLogistics) {
+												if (aliveLogistics.length > 0) {
+													groupController.spawnLogisticCmdCenter(serverName, {}, false, base, 2);
+												}
+											})
+											.catch(function (err) {
+												console.log('erroring line189: ', err);
+											})
+										;
+										masterDBController.unitActions('read', serverName, {name: base.name + ' Communications', dead: false})
+											.then(function (aliveComms) {
+												if (aliveComms.length > 0) {
+													groupController.spawnRadioTower(serverName, {}, false, base, 2);
+												}
+											})
+											.catch(function (err) {
+												console.log('erroring line189: ', err);
+											})
+										;
+									}
+								}
+								if (base.side === 2 && _.get(sideArray, [1], []).length > 0) {
+									// console.log('enemy in range: ', base.name + ': enemy Red');
+									if (_.get(sideArray, [2], []).length === 0) {
+										console.log('BASE HAS BEEN CAPTURED: ', base.name, ' is now ', 1);
+										var msg = base.name + " HAS BEEN CAPTURED BY RED";
+										DCSLuaCommands.sendMesgToAll(
+											serverName,
+											msg,
+											60
+										);
+										// console.log('Spawning Support Units', base, 1);
+										groupController.spawnSupportBaseGrp(serverName, base.name, 1, false);
+										masterDBController.baseActions('updateSide', serverName, {name: base.name, side: 1})
+											.then(function () {
+												baseSpawnFlagsController.setbaseSides(serverName);
+											})
+											.catch(function (err) {
+												console.log('erroring line189: ', err);
+											})
+										;
+										masterDBController.unitActions('read', serverName, {name: base.name + ' Logistics', dead: false})
+											.then(function (aliveLogistics) {
+												if (aliveLogistics.length > 0) {
+													groupController.spawnLogisticCmdCenter(serverName, {}, false, base, 1);
+												}
+											})
+											.catch(function (err) {
+												console.log('erroring line189: ', err);
+											})
+										;
+									}
+								}
+								if (base.side === 0 && (_.get(sideArray, [1], []).length > 0 || _.get(sideArray, [2], []).length > 0)) {
+									var unitSide = 0;
+									if (_.get(sideArray, [1], []).length > 0) {
+										unitSide = 1;
+									}
+									if(_.get(sideArray, [2], []).length > 0) {
+										unitSide = 2;
+									}
+									console.log('BASE HAS BEEN CAPTURED: ', base.name, ' is now ', unitSide);
+									var msg = base.name + " HAS BEEN CAPTURED";
 									DCSLuaCommands.sendMesgToAll(
 										serverName,
 										msg,
 										60
 									);
-									// console.log('Spawning Support Units', base, 2);
-									groupController.spawnSupportBaseGrp(serverName, base.name, 2, false);
-									masterDBController.baseActions('updateSide', serverName, {name: base.name, side: 2})
+									// console.log('Spawning Support Units', base, unitSide);
+									groupController.spawnSupportBaseGrp(serverName, base.name, unitSide, false);
+									masterDBController.baseActions('updateSide', serverName, {name: base.name, side: unitSide})
 										.then(function () {
 											baseSpawnFlagsController.setbaseSides(serverName);
 										})
 										.catch(function (err) {
-											console.log('erroring line162: ', err);
+											console.log('erroring line189: ', err);
 										})
 									;
 									masterDBController.unitActions('read', serverName, {name: base.name + ' Logistics', dead: false})
 										.then(function (aliveLogistics) {
 											if (aliveLogistics.length > 0) {
-												groupController.spawnLogisticCmdCenter(serverName, {}, false, base, 2);
+												groupController.spawnLogisticCmdCenter(serverName, {}, false, base, unitSide);
 											}
 										})
 										.catch(function (err) {
@@ -65,7 +145,7 @@ _.assign(exports, {
 									masterDBController.unitActions('read', serverName, {name: base.name + ' Communications', dead: false})
 										.then(function (aliveComms) {
 											if (aliveComms.length > 0) {
-												groupController.spawnRadioTower(serverName, {}, false, base, 2);
+												groupController.spawnRadioTower(serverName, {}, false, base, unitSide);
 											}
 										})
 										.catch(function (err) {
@@ -73,137 +153,59 @@ _.assign(exports, {
 										})
 									;
 								}
-							}
-							if (base.side === 2 && _.get(sideArray, [1], []).length > 0) {
-								// console.log('enemy in range: ', base.name + ': enemy Red');
-								if (_.get(sideArray, [2], []).length === 0) {
-									console.log('BASE HAS BEEN CAPTURED: ', base.name, ' is now ', 1);
-									var msg = base.name + " HAS BEEN CAPTURED BY RED";
-									DCSLuaCommands.sendMesgToAll(
-										serverName,
-										msg,
-										60
-									);
-									// console.log('Spawning Support Units', base, 1);
-									groupController.spawnSupportBaseGrp(serverName, base.name, 1, false);
-									masterDBController.baseActions('updateSide', serverName, {name: base.name, side: 1})
+							})
+							.catch(function (err) {
+								console.log('line 64: ', err);
+							}))
+						;
+					});
+					Promise.all(promiseBaseSideCount)
+						.then(function() {
+							var msg;
+							if (!_.isEmpty(bases)) {
+								if(campaignState.red === 0 && !unitsStaticsController.lockUpdates) {
+									msg = 'Blue has won the campaign, Map will reset in 5 minutes.';
+									console.log('BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON ');
+									masterDBController.serverActions('update', {name: serverName, resetFullCampaign: true})
 										.then(function () {
-											baseSpawnFlagsController.setbaseSides(serverName);
+											unitsStaticsController.lockUpdates = true;
+											resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
+											DCSLuaCommands.sendMesgToAll(
+												serverName,
+												msg,
+												_.get(constants, 'time.fiveMins')
+											);
 										})
 										.catch(function (err) {
-											console.log('erroring line189: ', err);
-										})
-									;
-									masterDBController.unitActions('read', serverName, {name: base.name + ' Logistics', dead: false})
-										.then(function (aliveLogistics) {
-											if (aliveLogistics.length > 0) {
-												groupController.spawnLogisticCmdCenter(serverName, {}, false, base, 1);
-											}
-										})
-										.catch(function (err) {
-											console.log('erroring line189: ', err);
+											console.log('line 178: ', err);
 										})
 									;
 								}
-							}
-							if (base.side === 0 && (_.get(sideArray, [1], []).length > 0 || _.get(sideArray, [2], []).length > 0)) {
-								var unitSide = 0;
-								if (_.get(sideArray, [1], []).length > 0) {
-									unitSide = 1;
+								if(campaignState.blue === 0 && !unitsStaticsController.lockUpdates) {
+									msg = 'Red has won the campaign, Map will reset in 5 minutes.';
+									console.log('RED WON RED WON RED WON RED WON RED WON RED WON RED WON RED WON RED WON ');
+									masterDBController.serverActions('update', {name: serverName, resetFullCampaign: true})
+										.then(function () {
+											unitsStaticsController.lockUpdates = true;
+											resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
+											DCSLuaCommands.sendMesgToAll(
+												serverName,
+												msg,
+												_.get(constants, 'time.fiveMins')
+											);
+										})
+										.catch(function (err) {
+											console.log('line 197: ', err);
+										})
+									;
 								}
-								if(_.get(sideArray, [2], []).length > 0) {
-									unitSide = 2;
-								}
-								console.log('BASE HAS BEEN CAPTURED: ', base.name, ' is now ', unitSide);
-								var msg = base.name + " HAS BEEN CAPTURED";
-								DCSLuaCommands.sendMesgToAll(
-									serverName,
-									msg,
-									60
-								);
-								// console.log('Spawning Support Units', base, unitSide);
-								groupController.spawnSupportBaseGrp(serverName, base.name, unitSide, false);
-								masterDBController.baseActions('updateSide', serverName, {name: base.name, side: unitSide})
-									.then(function () {
-										baseSpawnFlagsController.setbaseSides(serverName);
-									})
-									.catch(function (err) {
-										console.log('erroring line189: ', err);
-									})
-								;
-								masterDBController.unitActions('read', serverName, {name: base.name + ' Logistics', dead: false})
-									.then(function (aliveLogistics) {
-										if (aliveLogistics.length > 0) {
-											groupController.spawnLogisticCmdCenter(serverName, {}, false, base, unitSide);
-										}
-									})
-									.catch(function (err) {
-										console.log('erroring line189: ', err);
-									})
-								;
-								masterDBController.unitActions('read', serverName, {name: base.name + ' Communications', dead: false})
-									.then(function (aliveComms) {
-										if (aliveComms.length > 0) {
-											groupController.spawnRadioTower(serverName, {}, false, base, unitSide);
-										}
-									})
-									.catch(function (err) {
-										console.log('erroring line189: ', err);
-									})
-								;
 							}
 						})
 						.catch(function (err) {
 							console.log('line 64: ', err);
-						}))
+						})
 					;
-				});
-				Promise.all(promiseBaseSideCount)
-					.then(function() {
-						var msg;
-						if (!_.isEmpty(bases)) {
-							if(campaignState.red === 0 && !unitsStaticsController.lockUpdates) {
-								msg = 'Blue has won the campaign, Map will reset in 5 minutes.';
-								console.log('BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON BLUE WON ');
-								masterDBController.serverActions('update', {name: serverName, resetFullCampaign: true})
-									.then(function () {
-										unitsStaticsController.lockUpdates = true;
-										resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
-										DCSLuaCommands.sendMesgToAll(
-											serverName,
-											msg,
-											_.get(constants, 'time.fiveMins')
-										);
-									})
-									.catch(function (err) {
-										console.log('line 178: ', err);
-									})
-								;
-							}
-							if(campaignState.blue === 0 && !unitsStaticsController.lockUpdates) {
-								msg = 'Red has won the campaign, Map will reset in 5 minutes.';
-								console.log('RED WON RED WON RED WON RED WON RED WON RED WON RED WON RED WON RED WON ');
-								masterDBController.serverActions('update', {name: serverName, resetFullCampaign: true})
-									.then(function () {
-										unitsStaticsController.lockUpdates = true;
-										resetCampaignController.timeToRestart = new Date().getTime() + _.get(constants, 'time.fiveMins');
-										DCSLuaCommands.sendMesgToAll(
-											serverName,
-											msg,
-											_.get(constants, 'time.fiveMins')
-										);
-									})
-									.catch(function (err) {
-										console.log('line 197: ', err);
-									})
-								;
-							}
-						}
-					})
-					.catch(function (err) {
-						console.log('line 64: ', err);
-					})
-				;
+				}
 			})
 			.catch(function (err) {
 				console.log('line 118: ', err);
