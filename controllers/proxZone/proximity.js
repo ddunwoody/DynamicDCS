@@ -387,32 +387,34 @@ _.assign(exports, {
 			;
 	},
 	getGroundUnitsInProximity: function (serverName, lonLat, kmDistance, isTroop) {
-		var troopQuery = {
-			dead: false,
-			lonLatLoc: {
-				$near: {
-					$geometry: {
-						type: "Point",
-						coordinates: lonLat
-					},
-					$maxDistance: kmDistance * 1000
-				}
-			},
-			category: 'GROUND',
-			isCrate: false
-		};
-		if (!isTroop) {
-			_.set(troopQuery, 'isTroop', false);
+		if (lonLat && kmDistance) {
+			var troopQuery = {
+				dead: false,
+				lonLatLoc: {
+					$near: {
+						$geometry: {
+							type: "Point",
+							coordinates: lonLat
+						},
+						$maxDistance: kmDistance * 1000
+					}
+				},
+				category: 'GROUND',
+				isCrate: false
+			};
+			if (!isTroop) {
+				_.set(troopQuery, 'isTroop', false);
+			}
+			return masterDBController.unitActions('readStd', serverName, troopQuery)
+				.then(function (closeUnits) {
+					// console.log('close units ' + closeUnits);
+					return closeUnits;
+				})
+				.catch(function (err) {
+					console.log('line 413: ', err);
+				})
+				;
 		}
-		return masterDBController.unitActions('readStd', serverName, troopQuery)
-			.then(function (closeUnits) {
-				// console.log('close units ' + closeUnits);
-				return closeUnits;
-			})
-			.catch(function (err) {
-				console.log('line 413: ', err);
-			})
-			;
 	},
 	getLogiTowersProximity: function (serverName, lonLat, kmDistance, coalition) {
 		return masterDBController.unitActions(
