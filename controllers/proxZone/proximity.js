@@ -414,6 +414,8 @@ _.assign(exports, {
 					console.log('line 413: ', err);
 				})
 				;
+		} else {
+			Promise.resolve();
 		}
 	},
 	getLogiTowersProximity: function (serverName, lonLat, kmDistance, coalition) {
