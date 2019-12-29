@@ -890,6 +890,8 @@ _.assign(exports, {
 								var curTime =  new Date().getTime();
 								// console.log('cf: ', constants);
 								obj.curLifePoints = _.get(constants, 'config.startLifePoints', 0);
+								obj.currentSessionMinutesPlayed_blue = 0;
+								obj.currentSessionMinutesPlayed_red = 0;
 								if (curPly.sideLockTime < curTime) {
 									obj.sideLockTime = curTime + _.get(constants, 'time.oneHour');
 									obj.sideLock = 0;
@@ -903,6 +905,7 @@ _.assign(exports, {
 							if(obj.side === 0){ //keep the user on the last side
 								delete obj.side
 							}
+							console.log('updatedRecord: ', obj);
 							SrvPlayer.update(
 								{_id: obj._id},
 								{$set: obj},
