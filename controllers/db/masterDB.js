@@ -905,7 +905,7 @@ _.assign(exports, {
 							if(obj.side === 0){ //keep the user on the last side
 								delete obj.side
 							}
-							console.log('updatedRecord: ', obj);
+							// console.log('updatedRecord: ', obj);
 							SrvPlayer.update(
 								{_id: obj._id},
 								{$set: obj},
