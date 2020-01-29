@@ -269,7 +269,7 @@ masterDBController.initDB(serverName, masterServer)
 
 				setInterval(function () {
 					if (!_.get(exports, ['DCSSocket', 'connOpen'], true)) {
-						processTimedThirtyMinutes.processOneHour(serverName, sychrontronController.isServerSynced);
+						processOneHour.processOneHourActions(serverName, sychrontronController.isServerSynced);
 					}
 				}, _.get(constants, 'time.oneHour'));
 

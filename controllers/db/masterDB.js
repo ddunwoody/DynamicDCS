@@ -6,6 +6,8 @@ const _ = require('lodash');
 const constants = require('../constants');
 const DCSLuaCommands = require('../player/DCSLuaCommands');
 const Mongoose = require('mongoose');
+Mongoose.set('useCreateIndex', true);
+Mongoose.set('useFindAndModify', false);
 Mongoose.Promise = require('bluebird');
 var curDBMaster;
 var masterDBName = 'DDCS';
@@ -35,9 +37,12 @@ _.assign(exports, {
 				.then(function (reply) {
 					// console.log('READ FILE: ', reply.DB.user);
 					// console.log('const: ', exports.initConfig);
-					var connString = 'mongodb://' + _.get(exports, ['initConfig', 'DB', 'user']) + ':' + _.get(exports, ['initConfig', 'DB', 'password']) +'@' + host + ':27017/' + database + '?authSource=admin';
+					var connString = "mongodb://localhost:27017/" + database;
+					if(!!exports.initConfig.DB.user && !!exports.initConfig.DB.password) {
+						connString = 'mongodb://' + _.get(exports, ['initConfig', 'DB', 'user']) + ':' + _.get(exports, ['initConfig', 'DB', 'password']) +'@' + host + ':27017/' + database + '?authSource=admin';
+					}
 					// console.log('CS: ', connString);
-					_.set(exports, ['dbObj', 'dbConn', database], Mongoose.createConnection(connString, { useNewUrlParser: true }));
+					_.set(exports, ['dbObj', 'dbConn', database], Mongoose.createConnection(connString, { useNewUrlParser: true, useUnifiedTopology: true }));
 					resolve();
 				})
 				.catch(function (err) {
@@ -136,7 +141,7 @@ _.assign(exports, {
 			if(action === 'update') {
 				return new Promise(function(resolve, reject) {
 					// console.log('update: ', obj);
-					RemoteComm.update(
+					RemoteComm.updateOne(
 						{_id: obj._id},
 						{$set: obj},
 						{ upsert : true },
@@ -157,7 +162,7 @@ _.assign(exports, {
 			}
 			if(action === 'removeNonCommPeople') {
 				return new Promise(function(resolve, reject) {
-					RemoteComm.remove(
+					RemoteComm.deleteOne(
 						{
 							updatedAt: {
 								$lte: new Date(new Date().getTime() - (2 * 60 * 1000))
@@ -498,7 +503,7 @@ _.assign(exports, {
 			}
 			if (action === 'update') {
 				return new Promise(function(resolve, reject) {
-					Airfield.update(
+					Airfield.updateOne(
 						{_id: obj._id},
 						{$set: obj},
 						function(err, serObj) {
@@ -629,7 +634,7 @@ _.assign(exports, {
 			}
 			if(action === 'updateSpawnZones') {
 				return new Promise(function(resolve, reject) {
-					Airfield.update(
+					Airfield.updateOne(
 						{_id: obj.name},
 						{$set: {spawnZones: _.get(obj, 'spawnZones', {})}},
 						function(err, airfield) {
@@ -641,7 +646,7 @@ _.assign(exports, {
 			}
 			if(action === 'updateReplenTimer') {
 				return new Promise(function(resolve, reject) {
-					Airfield.update(
+					Airfield.updateOne(
 						{_id: obj.name},
 						{$set: {replenTime: _.get(obj, 'replenTime')}},
 						function(err, airfield) {
@@ -666,7 +671,7 @@ _.assign(exports, {
 								resolve(afObj);
 							});
 						} else {
-							Airfield.update(
+							Airfield.updateOne(
 								{_id: obj._id},
 								{$set: {side: _.get(obj, 'side', 0)}},
 								function(err, airfield) {
@@ -715,7 +720,7 @@ _.assign(exports, {
 				});
 			}
 			if(action === 'removeall') {
-				return CmdQue.remove({});
+				return CmdQue.deleteOne({});
 			}
 			if(action === 'dropall') {
 				return CmdQue.collection.drop();
@@ -755,7 +760,7 @@ _.assign(exports, {
 			}
 			if(action === 'update') {
 				return new Promise(function(resolve, reject) {
-					ProcessQue.update(
+					ProcessQue.updateOne(
 						{_id: obj._id},
 						{$set: obj},
 						function(err, pQue) {
@@ -837,7 +842,7 @@ _.assign(exports, {
 			}
 			if (action === 'update') {
 				return new Promise(function(resolve, reject) {
-					SrvPlayer.update(
+					SrvPlayer.updateOne(
 						{_id: obj._id},
 						{$set: obj},
 						function(err, serObj) {
@@ -849,7 +854,7 @@ _.assign(exports, {
 			}
 			if (action === 'unsetGicTimeLeft') {
 				return new Promise(function(resolve, reject) {
-					SrvPlayer.update(
+					SrvPlayer.updateOne(
 						{_id: obj._id},
 						{$unset: { gicTimeLeft: "" }},
 						function(err, serObj) {
@@ -906,7 +911,7 @@ _.assign(exports, {
 								delete obj.side
 							}
 							// console.log('updatedRecord: ', obj);
-							SrvPlayer.update(
+							SrvPlayer.updateOne(
 								{_id: obj._id},
 								{$set: obj},
 								function(err, serObj) {
@@ -1024,7 +1029,7 @@ _.assign(exports, {
 						if (serverObj.length !== 0) {
 							var curPly = _.get(serverObj, [0]);
 							var newTmpScore = 0;
-							SrvPlayer.update(
+							SrvPlayer.updateOne(
 								{_id: obj._id},
 								{$set: {tmpRSPoints: newTmpScore}},
 								function(err) {
@@ -1047,7 +1052,7 @@ _.assign(exports, {
 						if (serverObj.length !== 0) {
 							var curPly = _.get(serverObj, [0]);
 							var newTmpScore = _.get(curPly, 'tmpRSPoints', 0) + _.get(obj, 'score', 0);
-							SrvPlayer.update(
+							SrvPlayer.updateOne(
 								{_id: obj._id},
 								{$set: {tmpRSPoints: newTmpScore}},
 								function(err) {
@@ -1088,7 +1093,7 @@ _.assign(exports, {
 								_.set(rsTotals, 'tmpRSPoints', 0);
 							}
 							// console.log('APLY2: ', _.get(curPly, 'name'), rsTotals, mesg);
-							SrvPlayer.update(
+							SrvPlayer.updateOne(
 								{_id: obj._id},
 								{$set: rsTotals},
 								function(err) {
@@ -1123,7 +1128,7 @@ _.assign(exports, {
 										mesg = 'You have been awarded ' + addScore + ' from your ' + curType + ' for blue';
 										_.set(tObj, 'blueRSPoints', _.get(curPly, ['blueRSPoints'], 0) + addScore);
 									}
-									SrvPlayer.update(
+									SrvPlayer.updateOne(
 										{_id: obj._id},
 										{$set: tObj},
 										function(err) {
@@ -1150,7 +1155,7 @@ _.assign(exports, {
 							if (serverObj.length > 0) {
 								let curPlayer = _.first(serverObj);
 								console.log('Name: ', curPlayer.name, _.get(curPlayer, [sessionMinutesVar], 0) + _.get(obj, 'minutesPlayed', 0));
-								SrvPlayer.update(
+								SrvPlayer.updateOne(
 									{ _id: obj._id },
 									{ $set: { [sessionMinutesVar]: _.get(curPlayer, [sessionMinutesVar], 0) + _.get(obj, 'minutesPlayed', 0) } },
 									function (err) {
@@ -1168,7 +1173,7 @@ _.assign(exports, {
 					// console.log('RESETRESETRESETRESETRESETRESETRESETRESETRESETRESETRESETRESETRESETRESET');
 					if (obj._id) {
 						let sessionMinutesVar = 'currentSessionMinutesPlayed_' + _.get(constants, ['side', _.get(obj, 'side')]);
-						SrvPlayer.update(
+						SrvPlayer.updateOne(
 							{_id: obj._id},
 							{$set: {[sessionMinutesVar]: 0}},
 							function(err) {
@@ -1281,7 +1286,7 @@ _.assign(exports, {
 				});
 			}
 			if(action === 'removeall') {
-				return StaticCrates.remove({});
+				return StaticCrates.deleteOne({});
 			}
 			if(action === 'dropall') {
 				StaticCrates.collection.drop();
@@ -1313,7 +1318,7 @@ _.assign(exports, {
 			}
 			if(action === 'update') {
 				return new Promise(function(resolve, reject) {
-					Campaigns.update(
+					Campaigns.updateOne(
 						{name: obj.name},
 						{$set: obj},
 						function(err, campaigns) {
@@ -1364,7 +1369,7 @@ _.assign(exports, {
 			}
 			if(action === 'update') {
 				return new Promise(function(resolve, reject) {
-					Sessions.update(
+					Sessions.updateOne(
 						{name: obj.name},
 						{$set: obj},
 						{ upsert : true },
@@ -1509,7 +1514,7 @@ _.assign(exports, {
 				return new Promise(function(resolve, reject) {
 					var fiveMinsAgo = new Date(new Date()).getTime() - _.get(constants, 'time.fiveMins');
 					// console.log('five mins: ', fiveMinsAgo);
-					Unit.remove(
+					Unit.deleteOne(
 						{
 							dead: true,
 							category: {
@@ -1535,7 +1540,7 @@ _.assign(exports, {
 				});
 			}
 			if(action === 'removeall') {
-				return Unit.remove({});
+				return Unit.deleteOne({});
 			}
 			if(action === 'dropall') {
 				Unit.collection.drop();
@@ -1576,7 +1581,7 @@ _.assign(exports, {
 				});
 			}
 			if(action === 'removeall') {
-				return WebPush.remove({});
+				return WebPush.deleteOne({});
 			}
 			if(action === 'dropall') {
 				return WebPush.collection.drop();

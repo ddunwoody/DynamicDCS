@@ -41,7 +41,7 @@
 		});
 		/*
 		_.set(uASrv, 'updateServer', function (userAccount) {
-			var dupdate = DCSUserAccountsAPI.update(userAccount);
+			var dupdate = DCSUserAccountsAPI.updateOne(userAccount);
 			dupdate.$promise
 				.then(function(data) {
 					alertService.addAlert('success', 'Server options successfully saved!');

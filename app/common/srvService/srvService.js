@@ -41,7 +41,7 @@
 		});
 
 		_.set(dSrv, 'updateServer', function (server) {
-			var dupdate = DCSServerAPI.update(server);
+			var dupdate = DCSServerAPI.updateOne(server);
 			dupdate.$promise
 				.then(function(data) {
 					alertService.addAlert('success', 'Server options successfully saved!');
