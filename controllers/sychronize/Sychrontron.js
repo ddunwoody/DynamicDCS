@@ -72,7 +72,7 @@ _.set(exports, 'syncServer', function(serverName, serverUnitCount) {
 							) {
 								_.set(remappedunits, [curGrpName], _.get(remappedunits, [curGrpName], []));
 								remappedunits[curGrpName].push(unit);
-							} else if (_.get(unit, 'type') === '.Command Center') {
+							} else if (_.get(unit, 'type') === 'Shelter') {
 								groupController.spawnLogisticCmdCenter(serverName, unit, true);
 							} else if (_.get(unit, 'type') === 'Comms tower M') {
 								groupController.spawnRadioTower(serverName, unit, true);
