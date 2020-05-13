@@ -2533,8 +2533,8 @@ _.set(exports, 'spawnLogisticCmdCenter', function (serverName, staticObj, init, 
 		_.set(curGrpObj, 'lonLatLoc', zoneController.getRandomLatLonFromBase(serverName, _.get(baseObj, 'name'), 'buildingPoly'));
 	}
 	_.set(curGrpObj, 'category', 'Fortifications');
-	_.set(curGrpObj, 'type', '.Command Center');
-	_.set(curGrpObj, 'shape_name', 'ComCenter');
+	_.set(curGrpObj, 'type', 'Shelter B');
+	_.set(curGrpObj, 'shape_name', 'ukrytie_b');
 
 	var curCMD = exports.spawnStatic(serverName, exports.staticTemplate(curGrpObj), curGrpObj.country, curGrpObj.name, init);
 	var sendClient = {action: "CMD", cmd: curCMD, reqID: 0};

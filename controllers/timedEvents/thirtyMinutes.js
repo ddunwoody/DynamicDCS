@@ -6,7 +6,7 @@ const _ = require('lodash');
 const aiConvoysController = require('../action/aiConvoys');
 
 _.set(exports, 'processThirtyMinuteActions', function (serverName, fullySynced) {
-	if (fullySynced) {
+	if (fullySynced && false) {
 		aiConvoysController.maintainPvEConfig(serverName)
 			.catch(function (err) {
 				console.log('err line16: ', err);
