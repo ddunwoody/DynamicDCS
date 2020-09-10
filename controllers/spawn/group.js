@@ -2500,19 +2500,21 @@ _.set(exports, 'spawnNewMapGrps', function ( serverName ) {
 					var baseName = _.get(base, 'name');
 					var baseStartSide = _.get(base, 'defaultStartSide', 0);
 					totalUnitNum = 0;
-					groupController.spawnLogisticCmdCenter(serverName, {}, false, base, baseStartSide);
-					exports.spawnSupportBaseGrp(serverName, baseName, baseStartSide, true);
-					if(_.get(base, 'baseType') === 'MOB') {
-						while (spawnArray.length + totalUnitNum < curServer.replenThresholdBase) { //UNCOMMENT THESE
-							totalUnitNum += exports.spawnBaseReinforcementGroup(serverName, baseStartSide, baseName, true, true);
+					if (baseStartSide !== 0) {
+						groupController.spawnLogisticCmdCenter(serverName, {}, false, base, baseStartSide);
+						exports.spawnSupportBaseGrp(serverName, baseName, baseStartSide, true);
+						if(_.get(base, 'baseType') === 'MOB') {
+							while (spawnArray.length + totalUnitNum < curServer.replenThresholdBase) { //UNCOMMENT THESE
+								totalUnitNum += exports.spawnBaseReinforcementGroup(serverName, baseStartSide, baseName, true, true);
+							}
+							exports.spawnSAMNet(serverName, baseStartSide, baseName, true);
+							totalUnitNum += 3;
+							exports.spawnRadioTower(serverName, {}, true, _.find(_.get(constants, 'bases'), {name: baseName}), baseStartSide);
 						}
-						exports.spawnSAMNet(serverName, baseStartSide, baseName, true);
-						totalUnitNum += 3;
-						exports.spawnRadioTower(serverName, {}, true, _.find(_.get(constants, 'bases'), {name: baseName}), baseStartSide);
+						exports.spawnGroup(serverName, spawnArray, baseName, baseStartSide);
+						exports.spawnLogisticCmdCenter(serverName, {}, true, _.find(_.get(constants, 'bases'), {name: baseName}), baseStartSide);
+						totalUnitsSpawned += spawnArray.length + totalUnitNum + 1;
 					}
-					exports.spawnGroup(serverName, spawnArray, baseName, baseStartSide);
-					exports.spawnLogisticCmdCenter(serverName, {}, true, _.find(_.get(constants, 'bases'), {name: baseName}), baseStartSide);
-					totalUnitsSpawned += spawnArray.length + totalUnitNum + 1;
 					return totalUnitsSpawned
 				}
 			});
