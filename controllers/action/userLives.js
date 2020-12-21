@@ -260,6 +260,15 @@ _.assign(exports, {
 			storePoints: !isDirect
 		});
 	},
+	updateSafeLifePointTime: function (serverName, curPlayer, curUnit, execAction, isDirect) {
+		console.log('updateSafeLifePointTime: ', serverName, curPlayer, curUnit, execAction, isDirect);
+		masterDBController.srvPlayerActions('updateSafeLifePointTime', serverName, {
+			_id: curPlayer._id,
+			execAction: execAction,
+			groupId: _.get(curUnit, 'groupId'),
+			storePoints: !isDirect
+		});
+	},
 	removeLifePoints: function (serverName, curPlayer, curUnit, execAction, isDirect, removeLP) {
 		var curRemoveLP = removeLP;
 		if (!isDirect) {
