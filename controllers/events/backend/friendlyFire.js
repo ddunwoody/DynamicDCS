@@ -61,36 +61,51 @@ _.set(exports, 'processFriendlyFire', function (serverName, sessionName, eventOb
 											.then(function (tunit) {
 												curIUnit = _.first(iunit);
 												curTUnit = _.first(tunit);
-												// console.log('player: ', iPlayer, tPlayer);
-												//removeLifePoints: function (serverName, curPlayer, curUnit, execAction, isDirect, removeLP)
-												if(_.get(constants, 'config.lifePointsEnabled')){
-													userLivesController.removeLifePoints(
+												if(curIUnit.type !== _.get(eventObj, 'data.arg2', '?') && curIUnit.inAir) {
+													if(_.get(constants, 'config.lifePointsEnabled')){
+														userLivesController.removeLifePoints(
+															serverName,
+															curIPlayer,
+															curIUnit,
+															'Friendly Kill',
+															true,
+															6
+														);
+													}
+
+													if (curTUnit.inAir && _.get(constants, 'config.lifePointsEnabled')) {
+														userLivesController.addLifePoints(
+															serverName,
+															curTPlayer,
+															curTUnit,
+															'Friendly Death',
+															false
+														);
+													}
+
+													mesg = 'A: ' + constants.side[iPlayer.side] +' ' + iPlayer.name + '(' + curIUnit.type + ':-6 LP) has hit friendly ' + tPlayer.name + '(' + curTUnit.type + ':+LPLoss) with a ' + _.get(eventObj, 'data.arg2', '?');
+													DCSLuaCommands.sendMesgToCoalition(
+														iPlayer.side,
+														serverName,
+														mesg,
+														15
+													);
+												} else {
+													userLivesController.updateSafeLifePointTime(
 														serverName,
 														curIPlayer,
-														curIUnit,
-														'Friendly Kill',
-														true,
-														6
-													);
-												}
-
-												if (curTUnit.inAir && _.get(constants, 'config.lifePointsEnabled')) {
-													userLivesController.addLifePoints(
-														serverName,
-														curTPlayer,
 														curTUnit,
-														'Friendly Death',
-														false
+														'Friendly Collision',
+														true
 													);
-												}
-
-												mesg = 'A: ' + constants.side[iPlayer.side] +' ' + iPlayer.name + '(' + curIUnit.type + ':-6 LP) has hit friendly ' + tPlayer.name + '(' + curTUnit.type + ':+LPLoss) with a ' + _.get(eventObj, 'data.arg2', '?');
-												DCSLuaCommands.sendMesgToCoalition(
-													iPlayer.side,
-													serverName,
-													mesg,
-													15
-												);
+													mesg = 'A: ' + constants.side[iPlayer.side] +' ' + iPlayer.name + '(' + curIUnit.type + ') has collided with a friendly ' + tPlayer.name + '(' + curTUnit.type + ') with a be careful or coordinate your spawning'
+													DCSLuaCommands.sendMesgToCoalition(
+														iPlayer.side,
+														serverName,
+														mesg,
+														1
+													);
+												  }
 											})
 											.catch(function (err) {
 												console.log('err line45: ', err);

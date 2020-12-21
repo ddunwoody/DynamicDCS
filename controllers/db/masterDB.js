@@ -1021,6 +1021,37 @@ _.assign(exports, {
 				})
 			}
 
+			if (action === 'updateSafeLifePointTime') {
+				// console.log('rmPt: ', obj);
+				return new Promise(function(resolve, reject) {
+					SrvPlayer.find({_id: obj._id}, function (err, serverObj) {
+						var curAction = 'updateSafeLifePointTime';
+						if (err) {
+							reject(err)
+						}
+						// console.log('removeP: ', curTotalPoints, curPlayerObj, serverObj, obj);
+						if (serverObj.length > 0) {
+							var setObj = {
+								lastLifeAction: curAction,
+								safeLifeActionTime: (nowTime + 2 * _.get(constants, 'time.fifteenSecs'))
+							};
+							SrvPlayer.findOneAndUpdate(
+								{_id: obj._id},
+								{ $set: setObj },
+								function(err, srvPlayer) {
+									if (err) { reject(err) }
+									//DCSLuaCommands.sendMesgToGroup( obj.groupId, serverName, 'No LP was lost', 2);
+									resolve(srvPlayer);
+									}
+								)
+							}
+						else {
+							resolve('line305: Error: No Record in player db:' + obj._id);
+						}
+					});
+				})
+			}
+
 			if (action === 'clearTempScore') {
 				return new Promise(function(resolve, reject) {
 					// console.log('clearTempScore: ', obj);

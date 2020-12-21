@@ -790,6 +790,10 @@ _.assign(exports, {
 							if (pObj.cmd === 'tank') {
 								exports.spawnCrateFromLogi(serverName, curUnit, pObj.type, pObj.crates, false, '', pObj.mobile, pObj.mass, defCrate);
 							}
+							
+							if (pObj.cmd === 'antiship') {
+								exports.spawnCrateFromLogi(serverName, curUnit, pObj.type, pObj.crates, true, '', pObj.mobile, pObj.mass, defCrate);
+							}
 
 							if (pObj.cmd === 'artillary') {
 								exports.spawnCrateFromLogi(serverName, curUnit, pObj.type, pObj.crates, false, '', pObj.mobile, pObj.mass, defCrate);

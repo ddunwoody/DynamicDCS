@@ -127,7 +127,7 @@ local surfaceTypes = {
 do
 	--
 	local PORT = 3001
-	local DATA_TIMEOUT_SEC = 0.2
+	local DATA_TIMEOUT_SEC = 1
 
 	local isResetUnits = false
 	local lockBaseUpdates = true
